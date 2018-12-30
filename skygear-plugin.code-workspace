@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "src"
+		},
+		{
+			"path": "demo"
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"skygear"
+		]
+	}
+}
