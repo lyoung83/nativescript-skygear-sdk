@@ -2,15 +2,18 @@ declare var io: any;
 export const SKYAuthHandler = io.skygear.skygear.AuthResponseHandler;
 export const SKYLogoutHandler = io.skygear.skygear.LogoutResponseHandler;
 
+export var authWorker = new Worker('../result-worker');
 
 
 export class LoginHandler extends SKYAuthHandler {
 
     protected onAuthSuccess(result) {
+        authWorker.postMessage({result, error: null});
         return result;
     };
 
     protected onAuthFail(error) {
+        authWorker.postMessage({result: null, error })
         return error;
     }
 
@@ -33,12 +36,13 @@ export class LoginHandler extends SKYAuthHandler {
 export class LogoutHandler extends SKYLogoutHandler {
 
     protected onLogoutSuccess(result) {
+        authWorker.postMessage({result, error: null});
         console.log(result)
-        return ;
+        return;
     };
 
     protected onLogoutFail(error) {
-        console.log(error)
+        authWorker.postMessage({result: null, error })
         return;
     }
 

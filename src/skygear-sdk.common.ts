@@ -7,10 +7,23 @@ export interface iSkyConfig {
   apiKey: string
 }
 
+/**
+ * Required record interface for saving data into the Skygear database
+ * meant to be implemented by class
+ * @example class NewClass implements iSkyRecord {}
+ */
+export interface iSkyRecord {
+  _id?: any;
+  _created_at?: any;
+  _updated_at?: any;
+  _created_by?: string;
+  _updated_by?: string;
+  _ownerID?: string;
+  recordType: string;
+}
+
 export class Common extends Observable {
   public message: string;
-  public db: any;
-  public auth: any;
 
   constructor() {
     super();

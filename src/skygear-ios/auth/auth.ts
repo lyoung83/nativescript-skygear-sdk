@@ -1,73 +1,105 @@
-declare var SKYRecordSerializer: any;
+import { serializeResult, serializeError } from "../";
+var authWorker = new Worker('../result-worker');
 
+/**
+ * Class for Authentication against a Skygear backend.
+ */
 export class Auth {
     private auth
     constructor(skygear) {
         this.auth = skygear.auth;
     }
 
-    async resultFunc(result, err) {
-        try {
-            if (err) {
-                throw new Error(err)
+    private response = () => {
+        return new Promise((resolve, reject) => {
+            authWorker.onmessage = ({ data: { result } }) => {
+                try {
+                    resolve(result)
+                } catch {
+                    reject(new Error("Failed data fetch"));
+                }
             }
-            let _serializer = new SKYRecordSerializer();
-            let ref = await _serializer.dictionaryWithRecord(result);
-            let final = await NSJSONSerialization.dataWithJSONObjectOptionsError(ref, NSJSONWritingOptions.PrettyPrinted);
-            let newResult = await NSString.alloc().initWithDataEncoding(final, NSUTF8StringEncoding);
-            let json = await JSON.parse(newResult.toString())
-            return json;
-        } catch (e) {
-            throw new Error(e)
-        }
+        });
     }
 
+    private userHandler = (user, err) => {
+        let result = serializeResult(user);
+        let error = serializeError(err);
+        return authWorker.postMessage({ result, error })
+    }
+
+    /**
+     * Create a login with a unique username and password
+     * @param username
+     * @param password
+     */
     async signupWithUsername(username: string, password: string) {
         try {
             await this.auth
-                .signupWithUsernamePasswordCompletionHandler(username, password, this.resultFunc);
-            return this.resultFunc(this.auth.currentUser, null)
+                .signupWithUsernamePasswordCompletionHandler(username, password, this.userHandler);
+            return this.response()
         } catch {
             return { error: "duplicate record or missing information" }
         }
 
     }
 
+    /**
+     * Create a login with an unique email address and password
+     * @param email
+     * @param password
+     */
     async signupWithEmail(email: string, password: string) {
         try {
             await this.auth
-                .signupWithEmailPasswordCompletionHandler(email, password, this.resultFunc);
-            return this.resultFunc(this.auth.currentUser, null)
+                .signupWithEmailPasswordCompletionHandler(email, password, this.userHandler);
+            return this.response();
         } catch {
             return { error: "duplicate record or missing information" }
         }
     }
 
+    /**
+     * Authenticate account with a username and password.
+     * @param username
+     * @param password
+     */
     async loginWithUsername(username: string, password: string) {
         try {
             await this.auth
-                .loginWithUsernamePasswordCompletionHandler(username, password, this.resultFunc)
-            return this.resultFunc(this.auth.currentUser, null);
-        } catch {
-            return { error: "unable to login" }
+                .loginWithUsernamePasswordCompletionHandler(username, password, this.userHandler);
+            return this.response();
+        } catch ({ message }) {
+            return { error: message }
         }
 
     }
 
+    /**
+     * Authenticate with a email and password.
+     * @param email
+     * @param password
+     */
     async loginWithEmail(email: string, password: string) {
         try {
             await this.auth
-                .loginWithEmailPasswordCompletionHandler(email, password, this.resultFunc);
-            return this.resultFunc(this.auth.currentUser, null)
+                .loginWithEmailPasswordCompletionHandler(email, password, this.userHandler);
+
+            return this.response();
+
         } catch {
             return { error: "unable to login" }
         }
     }
 
+    /**
+     * Clear authentication from container.
+     */
     async logout() {
         try {
-            await this.auth.logoutWithCompletionHandler(this.resultFunc);
-            return this.resultFunc(this.auth.currentUser, null);
+            await this.auth.logoutWithCompletionHandler(this.userHandler);
+            return this.response();
+
         } catch {
             return { error: "Logout Failed" }
         }

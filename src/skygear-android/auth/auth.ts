@@ -1,6 +1,6 @@
 declare var io: any;
 const Serializer = io.skygear.skygear.RecordSerializer
-import { LoginHandler, LogoutHandler } from "./auth-handler";
+import { LoginHandler, LogoutHandler, authWorker } from "./auth-handler";
 
 export class Auth {
     private auth
@@ -13,7 +13,16 @@ export class Auth {
         try {
             await this.auth
                 .signupWithUsername(username, password, new LoginHandler())
-            return Serializer.serialize(this.auth.getCurrentUser())
+
+            return new Promise((resolve, reject) => {
+                authWorker.onmessage = (msg) => {
+                    if (msg.data.res === "success") {
+                        resolve(msg.data.result)
+                    } else {
+                        reject(new Error("Failed data fetch"));
+                    }
+                }
+            })
         } catch {
             return { error: "duplicate record or missing information" }
         }
@@ -25,7 +34,16 @@ export class Auth {
 
             await this.auth
                 .signupWithEmail(email, password, new LoginHandler());
-            return Serializer.serialize(this.auth.getCurrentUser())
+
+            return new Promise((resolve, reject) => {
+                authWorker.onmessage = (msg) => {
+                    if (msg.data.res === "success") {
+                        resolve(msg.data.result)
+                    } else {
+                        reject(new Error("Failed data fetch"));
+                    }
+                }
+            })
         } catch {
             return { error: "duplicate record or missing information" }
         }
@@ -35,7 +53,16 @@ export class Auth {
         try {
             await this.auth
                 .loginWithUsername(username, password, new LoginHandler())
-            return Serializer.serialize(this.auth.getCurrentUser());
+
+            return new Promise((resolve, reject) => {
+                authWorker.onmessage = (msg) => {
+                    if (msg.data.res === "success") {
+                        resolve(msg.data.result)
+                    } else {
+                        reject(new Error("Failed data fetch"));
+                    }
+                }
+            })
         } catch (e) {
             return { error: e.message }
         }
@@ -46,18 +73,35 @@ export class Auth {
             await this.auth
                 .loginWithEmail(email, password, new LoginHandler());
 
-            return Serializer.serialize(this.auth.getCurrentUser());
+            return new Promise((resolve, reject) => {
+                authWorker.onmessage = (msg) => {
+                    if (msg.data.res === "success") {
+                        resolve(msg.data.result)
+                    } else {
+                        reject(new Error("Failed data fetch"));
+                    }
+                }
+            })
         } catch {
             return { error: "unable to login" }
         }
     }
 
-    async logout(){
+    async logout() {
         try {
             await this.auth.logout(new LogoutHandler());
-            return Serializer.serialize(this.auth.getCurrentUser());
+
+            return new Promise((resolve, reject) => {
+                authWorker.onmessage = (msg) => {
+                    if (msg.data.res === "success") {
+                        resolve(msg.data.result)
+                    } else {
+                        reject(new Error("Failed data fetch"));
+                    }
+                }
+            })
         } catch {
-            return { error: "Logout Failure"}
+            return { error: "Logout Failure" }
         }
     }
 

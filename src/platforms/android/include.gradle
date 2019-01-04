@@ -13,5 +13,5 @@ dependencies {
     // Describe plugin native Android dependencies like
 	// compile "groupName:pluginName:ver"
     // EXAMPLE: compile "com.facebook.fresco:fresco:0.9.0+"
-    compile 'io.skygear:skygear:+'
+    compile 'io.skygear:skygear:1.6.4'
 }
