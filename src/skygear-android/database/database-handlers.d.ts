@@ -5,7 +5,8 @@ export declare var databaseWorker: Worker;
 export declare class RecordSaveResponse extends SKYRecordSaveResponseHandler {
     onSaveSuccess(result: any): any;
     onSaveFail(error: any): any;
-    onSaveRecordsSuccess(records: any): void;
+    onSuccess(record: any): void;
+    onFail(err: any): void;
 }
 export declare class QueryResponse extends SKYRecordQueryResponseHandler {
     onQuerySuccess(result: any): any;

@@ -8,6 +8,7 @@ export declare class Database {
     private response();
     private sliceId(id);
     private prepareDB(skygear);
+    private createMap(record);
     getPublicDatabase(): any;
     getPrivateDatabase(): any;
     savePrivateRecord(record: iSkyRecord): Promise<{}>;

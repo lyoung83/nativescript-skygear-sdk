@@ -18,7 +18,7 @@ export class HelloWorldModel extends Observable {
 
   async getUser() {
     try {
-      this.user = await this.skygearSdk.auth.loginWithUsername("frank7", "password");
+      this.user = await this.skygearSdk.auth.loginWithUsername("frank6", "password");
       // this.user = await this.skygearSdk.auth.logout();
       // this.user = await this.skygearSdk.auth.signupWithUsername("frank7", "password")
       console.log("view user", this.user)
@@ -29,12 +29,12 @@ export class HelloWorldModel extends Observable {
 
   async recordStuff() {
     try {
-      let task = new Todo("save database", false);
+      let task = new Todo("update database", false);
       // let result = await this.skygearSdk.db.savePrivateRecord(task)
       // let result = await this.skygearSdk.db.getPrivateRecord("todo", "todo/94D84FFC-C844-4BBB-A867-B6736CD1F85F");
       // let result = await this.skygearSdk.db.deletePrivateRecord("todo", "todo/F9C63647-ED7B-442D-8EBB-C27776654916")
-      let result = await this.skygearSdk.db.updatePrivateRecord(task, "todo/D22B564C-8697-4A73-AA27-4DEB35EC6F57")
-      // let result = await this.skygearSdk.db.getCollection("todo");
+      // let result = await this.skygearSdk.db.updatePrivateRecord(task, "todo/46E24C5B-91FF-407E-AC27-1A6806CB780E")
+      let result = await this.skygearSdk.db.getCollection("todo");
       // let result = await this.skygearSdk.db.getUsers();
       console.log("view record", result);
       // let ids = result.map(record => record._id);

@@ -7,7 +7,8 @@ var SKYDatabase = io.skygear.skygear.Database;
 var Serializer = io.skygear.skygear.RecordSerializer;
 var JSONObject = org.json.JSONObject;
 var Map = java.util.HashMap;
-var Bool = java.lang.Boolean
+var Bool = java.lang.Boolean;
+
 export class Database {
     private readonly PUBLIC_DATABASE_NAME = "_public";
     private readonly PRIVATE_DATABASE_NAME = "_private";
@@ -144,7 +145,6 @@ export class Database {
         try {
             let map = this.createMap(record)
             let updatedRecord = new Record(record.recordType, this.sliceId(id), map);
-            updatedRecord.set(record);
             await this.public.save(updatedRecord, new RecordSaveResponse());
             return this.response();
 
