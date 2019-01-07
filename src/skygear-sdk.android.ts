@@ -1,6 +1,6 @@
 import { Common, iSkyConfig } from './skygear-sdk.common';
 import { android } from 'tns-core-modules/application'
-import { Auth, Database } from './skygear-android';
+import { Auth, Database, PubSub } from './skygear-android';
 
 declare var io: any;
 const Container = io.skygear.skygear.Container;
@@ -12,6 +12,7 @@ export class SkygearSdk extends Common {
     private skygear;
     public db: Database;
     public auth: Auth;
+    public pubsub: PubSub
 
     constructor(skyConfig: iSkyConfig) {
         super();
@@ -24,6 +25,7 @@ export class SkygearSdk extends Common {
         this.skygear = new Container(android.context, this.config);
         this.auth = new Auth(this.skygear);
         this.db = new Database(this.skygear)
+        this.pubsub = new PubSub(this.skygear)
     }
 
 

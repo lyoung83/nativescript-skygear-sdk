@@ -12,17 +12,17 @@ export declare class QueryResponse extends SKYRecordQueryResponseHandler {
     onQuerySuccess(result: any): any;
     onQueryError(error: any): any;
     onSuccess(result: any): void;
-    onFailure(error: any): void;
+    onFailure(err: any): void;
 }
 export declare class RecordFetchResponse extends SKYRecordQueryResponseHandler {
     onQuerySuccess(result: any): any;
     onQueryError(error: any): any;
     onSuccess(result: any): void;
-    onFailure(error: any): void;
+    onFailure(err: any): void;
 }
 export declare class RecordDeleteResponse extends SKYRecordDeleteResponseHandler {
     onDeleteSuccess(result: any): any;
     onDeleteError(error: any): any;
     onSuccess(result: any): void;
-    onFailure(error: any): void;
+    onFailure(err: any): void;
 }

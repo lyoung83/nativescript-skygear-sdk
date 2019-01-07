@@ -1,5 +1,6 @@
 export { Auth } from './auth/auth';
 export { Database } from './database/database';
+export { PubSub } from './pubsub/pubsub';
 
 export var globalWorker = new Worker('./result-worker');
 
@@ -14,7 +15,7 @@ export const serializeResult = (result) => {
 }
 
 export const serializeError = (error) => {
-    if (error === null){
+    if (error === null) {
         return error;
     }
     return error.userInfo.valueForKey("NSLocalizedDescription");

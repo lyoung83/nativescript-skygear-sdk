@@ -44,8 +44,10 @@ export class QueryResponse extends SKYRecordQueryResponseHandler {
         this.onQuerySuccess(records["result"]);
     }
 
-    onFailure(error) {
-        this.onQueryError(error)
+    onFailure(err) {
+        let json = SKYErrorSerializer.serialize(err)
+        let error = JSON.parse(json)
+        this.onQueryError(error["name"])
     }
 };
 
@@ -66,8 +68,10 @@ export class RecordFetchResponse extends SKYRecordQueryResponseHandler {
         this.onQuerySuccess(records["result"][0]);
     }
 
-    onFailure(error) {
-        this.onQueryError(error)
+    onFailure(err) {
+        let json = SKYErrorSerializer.serialize(err)
+        let error = JSON.parse(json)
+        this.onQueryError(error["name"])
     }
 };
 
@@ -87,7 +91,9 @@ export class RecordDeleteResponse extends SKYRecordDeleteResponseHandler {
         this.onDeleteSuccess(records["result"][0]);
     }
 
-    onFailure(error) {
-        this.onDeleteError(error)
+    onFailure(err) {
+        let json = SKYErrorSerializer.serialize(err)
+        let error = JSON.parse(json)
+        this.onDeleteError(error["name"])
     }
 }

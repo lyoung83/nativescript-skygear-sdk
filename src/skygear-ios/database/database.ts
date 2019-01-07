@@ -136,7 +136,7 @@ export class Database {
      */
     async getUsers() {
         try {
-            let query = await SKYQuery.queryWithRecordTypePredicate("users", null);
+            let query = await SKYQuery.queryWithRecordTypePredicate("user", null);
             await this.public.performQueryCompletionHandler(query, this.returnCollection);
 
             return this.response();

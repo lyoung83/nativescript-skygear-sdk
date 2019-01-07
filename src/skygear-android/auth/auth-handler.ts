@@ -1,4 +1,6 @@
 declare var io: any;
+var SKYErrorSerializer = io.skygear.skygear.ErrorSerializer;
+
 export const SKYAuthHandler = io.skygear.skygear.AuthResponseHandler;
 export const SKYLogoutHandler = io.skygear.skygear.LogoutResponseHandler;
 
@@ -12,8 +14,10 @@ export class LoginHandler extends SKYAuthHandler {
         return result;
     };
 
-    protected onAuthFail(error) {
-        authWorker.postMessage({result: null, error })
+    protected onAuthFail(err) {
+        let json = SKYErrorSerializer.serialize(err)
+        let error = JSON.parse(json);
+        authWorker.postMessage({result: null, error: error.message })
         return error;
     }
 
@@ -27,6 +31,7 @@ export class LoginHandler extends SKYAuthHandler {
     }
 
     onFailure(error) {
+        console.log(error);
         return this.onAuthFail(new Error(error));
     }
 

@@ -102,7 +102,7 @@ export class Database {
 
     async getUsers() {
         try {
-            let query = new Query("users");
+            let query = new Query("user");
             await this.public.query(query, new QueryResponse());
             return this.response();
         } catch ({ message: error }) {

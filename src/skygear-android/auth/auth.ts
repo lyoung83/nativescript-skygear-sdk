@@ -19,7 +19,7 @@ export class Auth {
                     if (msg.data.res === "success") {
                         resolve(msg.data.result)
                     } else {
-                        reject(new Error("Failed data fetch"));
+                        reject(new Error(msg.data.result));
                     }
                 }
             })
