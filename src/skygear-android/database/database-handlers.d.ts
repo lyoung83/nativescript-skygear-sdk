@@ -10,18 +10,21 @@ export declare class RecordSaveResponse extends SKYRecordSaveResponseHandler {
     onFail(err: any): void;
 }
 export declare class QueryResponse extends SKYRecordQueryResponseHandler {
+    worker: Worker;
     onQuerySuccess(result: any): any;
     onQueryError(error: any): any;
     onSuccess(result: any): void;
     onFailure(err: any): void;
 }
 export declare class RecordFetchResponse extends SKYRecordQueryResponseHandler {
+    worker: Worker;
     onQuerySuccess(result: any): any;
     onQueryError(error: any): any;
     onSuccess(result: any): void;
     onFailure(err: any): void;
 }
 export declare class RecordDeleteResponse extends SKYRecordDeleteResponseHandler {
+    worker: Worker;
     onDeleteSuccess(result: any): any;
     onDeleteError(error: any): any;
     onSuccess(result: any): void;
