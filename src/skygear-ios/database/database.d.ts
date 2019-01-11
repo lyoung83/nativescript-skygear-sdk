@@ -3,9 +3,10 @@ export declare class Database {
     private public;
     private private;
     constructor(skygear: any);
+    private spawnWorker();
     private response;
-    private returnRecord(record, err);
-    private returnCollection(records, err);
+    private returnRecord;
+    private returnCollection;
     private sliceId(id);
     getPublicDatabase(): any;
     getPrivateDatabase(): any;

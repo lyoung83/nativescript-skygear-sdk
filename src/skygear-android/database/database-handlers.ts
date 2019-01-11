@@ -7,11 +7,15 @@ export var databaseWorker = new Worker('../result-worker');
 var SKYErrorSerializer = io.skygear.skygear.ErrorSerializer;
 
 export class RecordSaveResponse extends SKYRecordSaveResponseHandler {
+    worker: Worker = new Worker('../result-worker');
+
     onSaveSuccess(result) {
         databaseWorker.postMessage({ result, error: null })
+        this.worker.postMessage({ result, error: null })
         return result;
     }
     onSaveFail(error) {
+        this.worker.postMessage({ result: null, error})
         databaseWorker.postMessage({ result: null, error });
         return error;
     }
@@ -29,12 +33,16 @@ export class RecordSaveResponse extends SKYRecordSaveResponseHandler {
 };
 
 export class QueryResponse extends SKYRecordQueryResponseHandler {
+    worker: Worker = new Worker('../result-worker');
+
     onQuerySuccess(result) {
         databaseWorker.postMessage({ result, error: null });
+        this.worker.postMessage({ result, error: null })
         return result;
     }
 
     onQueryError(error) {
+        this.worker.postMessage({ result: null, error })
         databaseWorker.postMessage({ result: null, error });
         return error;
     }
@@ -53,12 +61,16 @@ export class QueryResponse extends SKYRecordQueryResponseHandler {
 
 
 export class RecordFetchResponse extends SKYRecordQueryResponseHandler {
+    worker: Worker = new Worker('../result-worker');
+
     onQuerySuccess(result) {
+        this.worker.postMessage({ result, error: null })
         databaseWorker.postMessage({ result, error: null });
         return result;
     }
 
     onQueryError(error) {
+        this.worker.postMessage({ result: null, error })
         databaseWorker.postMessage({ result: null, error });
         return error;
     }
@@ -76,12 +88,16 @@ export class RecordFetchResponse extends SKYRecordQueryResponseHandler {
 };
 
 export class RecordDeleteResponse extends SKYRecordDeleteResponseHandler {
+    worker: Worker = new Worker('../result-worker');
+
     onDeleteSuccess(result) {
+        this.worker.postMessage({ result, error: null })
         databaseWorker.postMessage({ result, error: null });
         return result;
     }
 
     onDeleteError(error) {
+        this.worker.postMessage({ result: null, error })
         databaseWorker.postMessage({ result: null, error });
         return error;
     }

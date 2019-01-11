@@ -31,7 +31,7 @@ export class Database {
             }
         };
 
-        databaseWorker.onerror = error => {
+        worker.onerror = error => {
             console.log(error);
             reject({ error });
         };
@@ -198,8 +198,7 @@ export class Database {
     async updatePrivateRecord(record: iSkyRecord, id: string) {
         try {
             let worker = this.spawnWorker()
-            let recordToModify = await SKYRecord.recordWithRecordTypeName(record.recordType, this.sliceId(id));
-            let modifiedRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record)
+            let modifiedRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, record._id, record)
             await this.private.saveRecordCompletion(modifiedRecord, this.returnRecord(worker));
             return this.response(worker)
         } catch ({ message: error }) {
@@ -215,8 +214,7 @@ export class Database {
     async updatePublicRecord(record: iSkyRecord, id: string) {
         try {
             let worker = this.spawnWorker();
-            let recordToModify = await SKYRecord.recordWithRecordTypeName(record.recordType, this.sliceId(id));
-            let modifiedRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record)
+            let modifiedRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, record._id, record)
             await this.public.saveRecordCompletion(modifiedRecord, this.returnRecord(worker));
             return this.response(worker);
         } catch ({ message: error }) {

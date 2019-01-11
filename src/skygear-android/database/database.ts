@@ -19,9 +19,9 @@ export class Database {
         console.log({ public: this.public, private: this.private })
     }
 
-    private response() {
+    private response(worker) {
         return new Promise((resolve, reject) => {
-            databaseWorker.onmessage = (msg) => {
+            worker.onmessage = (msg) => {
                 if (msg.data.res === "success") {
                     resolve(msg.data.result);
                 } else {
@@ -72,8 +72,9 @@ export class Database {
         try {
             let map = await this.createMap(record);
             let recordToSave = new Record(record.recordType, map);
-            await this.private.save(recordToSave, new RecordSaveResponse());
-            return this.response();
+            let databaseHandler = new RecordSaveResponse();
+            await this.private.save(recordToSave, databaseHandler);
+            return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
             return { error }
         }
@@ -84,8 +85,9 @@ export class Database {
         try {
             let map = await this.createMap(record);
             let recordToSave = new Record(record.recordType, map);
-            await this.public.save(recordToSave, new RecordSaveResponse());
-            return this.response();
+            let databaseHandler = new RecordSaveResponse();
+            await this.public.save(recordToSave, databaseHandler);
+            return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
             return { error }
         }
@@ -93,8 +95,9 @@ export class Database {
     async getCollection(recordType: string) {
         try {
             let query = new Query(recordType);
-            await this.private.query(query, new QueryResponse());
-            return this.response();
+            let databaseHandler = new QueryResponse();
+            await this.private.query(query, databaseHandler);
+            return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
             return { error }
         }
@@ -103,8 +106,9 @@ export class Database {
     async getUsers() {
         try {
             let query = new Query("user");
-            await this.public.query(query, new QueryResponse());
-            return this.response();
+            let databaseHandler = new QueryResponse();
+            await this.public.query(query, databaseHandler);
+            return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
             return { error }
         }
@@ -113,8 +117,9 @@ export class Database {
         try {
             let query = new Query(recordType)
                 .equalTo("_id", this.sliceId(id));
-            await this.private.query(query, new RecordFetchResponse());
-            return this.response();
+            let databaseHandler = new RecordFetchResponse();
+            await this.private.query(query, databaseHandler);
+            return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
             return { error }
         }
@@ -124,8 +129,9 @@ export class Database {
         try {
             let query = new Query(recordType)
                 .equalTo("_id", this.sliceId(id));
-            await this.public.query(query, new RecordFetchResponse());
-            return this.response();
+                let databaseHandler = new RecordFetchResponse();
+            await this.public.query(query, databaseHandler);
+            return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
             return { error }
         }
@@ -134,8 +140,9 @@ export class Database {
         try {
             let map = this.createMap(record)
             let updatedRecord = new Record(record.recordType, this.sliceId(id), map);
-            await this.private.save(updatedRecord, new RecordSaveResponse());
-            return this.response();
+            let databaseHandler = new RecordSaveResponse();
+            await this.private.save(updatedRecord, databaseHandler);
+            return this.response(databaseHandler.worker);
 
         } catch ({ message: error }) {
             return { error }
@@ -145,8 +152,9 @@ export class Database {
         try {
             let map = this.createMap(record)
             let updatedRecord = new Record(record.recordType, this.sliceId(id), map);
-            await this.public.save(updatedRecord, new RecordSaveResponse());
-            return this.response();
+            let databaseHandler = new RecordSaveResponse();
+            await this.public.save(updatedRecord, databaseHandler);
+            return this.response(databaseHandler.worker);
 
         } catch ({ message: error }) {
             return { error }
@@ -155,8 +163,9 @@ export class Database {
     async deletePrivateRecord(recordType: string, id: string) {
         try {
             let recordToDelete = new Record(recordType, this.sliceId(id), null);
-            await this.private.delete(recordToDelete, new RecordDeleteResponse());
-            return this.response();
+            let databaseHandler = new RecordDeleteResponse();
+            await this.private.delete(recordToDelete, databaseHandler);
+            return this.response(databaseHandler.worker);
 
         } catch ({ message: error }) {
             return { error }
@@ -165,8 +174,9 @@ export class Database {
     async deletePublicRecord(recordType: string, id: string) {
         try {
             let recordToDelete = new Record(recordType, this.sliceId(id), null);
-            await this.public.delete(recordToDelete, new RecordDeleteResponse());
-            return this.response();
+            let databaseHandler = new RecordDeleteResponse();
+            await this.private.delete(recordToDelete, databaseHandler);
+            return this.response(databaseHandler.worker);
 
         } catch ({ message: error }) {
             return { error }
