@@ -10,5 +10,5 @@ export declare class PubSub {
     private createArray(array);
     private createPayload(payload);
     subscribe(channelName: string): Promise<{}>;
-    publish(channelName: string, payload: any): Promise<{}>;
+    publish(channelName: string, payload: any): Promise<any>;
 }

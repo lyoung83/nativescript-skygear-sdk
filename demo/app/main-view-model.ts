@@ -1,71 +1,119 @@
-import { Observable } from 'tns-core-modules/data/observable';
+import { Observable, EventData } from 'tns-core-modules/data/observable';
 import { SkygearSdk } from 'nativescript-skygear-sdk';
 import { Todo } from './model';
+import { ItemEventData, ListView } from 'tns-core-modules/ui/list-view/list-view';
+import { skygearSdk as sdk } from './sdk'
 
 export class HelloWorldModel extends Observable {
   public message: string;
   private skygearSdk: SkygearSdk;
   user: any;
-  messages = [];
+  selectedUser: any;
+  messages: [any];
   channel: any;
+  todos: [any];
+  users: [any];
 
   constructor() {
     super();
-    // this.skygearSdk = new SkygearSdk({ apiKey: "6e4f44b812d24c7885f0e38df69150d8", address: "https://plugintest.skygeario.com/" });
-    // this.skygearSdk = new SkygearSdk({ apiKey: "plugintest123", address: "http://10.0.3.2:3001/" });
-    this.skygearSdk = new SkygearSdk({ apiKey: "plugintest123", address: "http://localhost:3001/" });
+    this.skygearSdk = sdk;
     this.message = this.skygearSdk.message;
-    this.getUser()
-      .then(
-        () => this.recordStuff()
-          .then(
-            () => this.pubsubStuff()
-              .then(
-                () => this.skygearSdk.pubsub.publish("hello", { world: "reply" })
-              )));
+    this.getUsers();
+    this.getTodos();
   }
 
-  async getUser() {
+  async onItemTap(args: ItemEventData) {
+    const index = args.index;
+    const listView = <ListView>args.object;
+    const user = await this.skygearSdk.db.getPublicRecord("user", listView.items[index]._id);
+    this.set("selectedUser", user);
+    console.log(`ListView item tap`, user);
+  }
+
+
+  async login() {
     try {
-      this.user = await this.skygearSdk.auth.loginWithUsername("frank", "password");
-      // this.user = await this.skygearSdk.auth.logout();
-      // this.user = await this.skygearSdk.auth.signupWithUsername("frank7", "password")
-      console.log("view user", this.user)
+      this.user = await this.skygearSdk.auth.loginWithUsername("frank6", "password");
+      this.set("message", `you logged in as ${this.user.username}`);
+      alert(`Logged in as ${this.user.username}`);
     } catch (e) {
-      console.log(e)
+      alert(e.message);
+    }
+  }
+
+
+  getUser(args: ItemEventData) {
+    try {
+      const index = args.index;
+      const listView = <ListView>args.object;
+      const user = listView.items[index];
+      alert(`got user ${user.username} with id ${user._id}`);
+    } catch (e) {
+      alert(e.message);
+    }
+  }
+
+  async getUsers(){
+    try {
+    let users = await this.skygearSdk.db.getUsers();
+    console.log(users);
+    this.set("users", users);
+    alert("Got Users")
+    } catch {
+      alert("Unable to fetch users");
     }
   }
 
   async pubsubStuff() {
     try {
-      this.channel = await this.skygearSdk.pubsub.subscribe("hello")
-      this.messages.push(this.channel);
-      this.skygearSdk.pubsub.publish("hello", { numbers: ["hi", "no"] })
-      console.log(this.messages, this.messages.length);
-      this.pubsubStuff();
-      return "ok";
+      this.set("channel", await this.skygearSdk.pubsub.subscribe("hello"))
+      alert("Subscription Over");
     } catch (error) {
-      return { error }
+      alert(error.message)
     }
 
   }
 
-  async recordStuff() {
+  async createTodo(todo: string) {
     try {
-      let task = new Todo("update database", false);
-      // let result = await this.skygearSdk.db.savePrivateRecord(task)
-      // let result = await this.skygearSdk.db.getPrivateRecord("todo", "todo/94D84FFC-C844-4BBB-A867-B6736CD1F85F");
-      // let result = await this.skygearSdk.db.deletePrivateRecord("todo", "todo/F9C63647-ED7B-442D-8EBB-C27776654916")
-      // let result = await this.skygearSdk.db.updatePrivateRecord(task, "todo/46E24C5B-91FF-407E-AC27-1A6806CB780E")
-      let result = await this.skygearSdk.db.getCollection("todo");
-      // let result = await this.skygearSdk.db.getUsers();
-      console.log("view record", result);
-      // let ids = result.map(record => record._id);
-      // console.log("ids", ids);
+      let task = new Todo(todo, false);
+      await this.skygearSdk.db.savePrivateRecord(task)
+      this.getTodos();
+      alert(`${todo} created`)
     } catch (error) {
       console.log(error);
     }
-
   }
 
+  async removeTodo(args: ItemEventData) {
+    try {
+      const index = args.index;
+      const id = this.todos[index]._id;
+      await this.skygearSdk.db.deletePrivateRecord("todo", id)
+      this.getTodos();
+      alert("Item Deleted");
+    } catch (e) {
+      alert(e.message)
+    }
+  }
+
+  async getTodos() {
+    try {
+      let result = await this.skygearSdk.db.getCollection("todo");
+      this.set("todos", result);
+      // @ts-ignore
+      alert(`fetched ${result.length} todos`)
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+  async getFirstTodo() {
+    try {
+      let todo = this.todos[0]
+      alert(`${todo.task} - ${todo.completed}`)
+    } catch  {
+      alert("No todos found");
+    }
+  }
 }

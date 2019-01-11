@@ -1,3 +1,4 @@
 platform :ios, 9.0
 
 pod 'SKYKit', '~> 1.6.4'
+pod 'SKYKitChat', '~> 1.6.3'

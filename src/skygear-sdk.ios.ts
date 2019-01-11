@@ -1,5 +1,5 @@
 import { Common, iSkyConfig } from './skygear-sdk.common';
-import { Auth, Database, PubSub } from './skygear-ios'
+import { Auth, Database, PubSub, Chat } from './skygear-ios'
 declare var SKYContainer: any;
 
 export class SkygearSdk extends Common {
@@ -7,16 +7,19 @@ export class SkygearSdk extends Common {
     public db: Database;
     public auth: Auth;
     public pubsub: PubSub;
+    public chat: Chat;
 
-    constructor(config: iSkyConfig) {
+    constructor({address, apiKey}: iSkyConfig) {
         super()
 
         this.skygear = new SKYContainer();
-        this.skygear.configAddress(config.address);
-        this.skygear.configureWithAPIKey(config.apiKey);
+        this.skygear.configAddress(address);
+        this.skygear.configureWithAPIKey(apiKey);
+
         this.auth = new Auth(this.skygear);
         this.db = new Database(this.skygear);
         this.pubsub = new PubSub(this.skygear);
+        this.chat = new Chat(this.skygear);
     }
 
 

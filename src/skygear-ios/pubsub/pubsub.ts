@@ -4,16 +4,21 @@ export class PubSub {
     constructor(skygear) {
         this.channel = skygear.pubsub;
     }
-    private response() {
-        return new Promise((resolve, reject) => {
-            channelWorker.onmessage = (msg) => {
-                if (msg.data.res === "success") {
-                    resolve(msg.data.result);
-                } else {
-                    reject(new Error("Unable to join."));
+    private async response() {
+        try {
+            return new Promise((resolve, reject) => {
+                channelWorker.onmessage = (msg) => {
+                    if (msg.data.res === "success") {
+                        resolve(msg.data.result);
+                    } else {
+                        reject(new Error("Unable to join."));
+                    }
                 }
-            }
-        })
+            })
+        } catch ({message: error}) {
+            return { error }
+        }
+
     }
 
     private handler(info: any) {

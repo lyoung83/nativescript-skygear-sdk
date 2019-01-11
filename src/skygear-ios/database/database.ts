@@ -18,8 +18,12 @@ export class Database {
         console.log({ public: this.public, private: this.private })
     }
 
-    private response = () => new Promise((resolve, reject) => {
-        databaseWorker.onmessage = (msg) => {
+    private spawnWorker(){
+        return new Worker('../result-worker')
+    }
+
+    private response = (worker: Worker) => new Promise((resolve, reject) => {
+        worker.onmessage = (msg) => {
             if (msg.data.res === "success") {
                 resolve(msg.data.result)
             } else {
@@ -33,22 +37,22 @@ export class Database {
         };
     });
 
-    private returnRecord(record, err) {
+    private returnRecord = (worker) => (record, err) => {
         try {
             let result = serializeResult(record);
             let error = serializeError(err);
-            return databaseWorker.postMessage({ result, error });
+            return worker.postMessage({ result, error });
         } catch ({ message: error }) {
             return { error }
         }
     }
 
-    private returnCollection(records, err) {
+    private returnCollection = (worker) => (records, err) => {
         try {
             let newArray = utils.ios.collections.nsArrayToJSArray(records);
             let result = newArray.map(item => serializeResult(item));
             let error = serializeError(err);
-            return databaseWorker.postMessage({ result, error });
+            return worker.postMessage({ result, error });
         } catch ({ message: error }) {
             return { error }
         }
@@ -86,10 +90,11 @@ export class Database {
      */
     async savePrivateRecord(record: iSkyRecord) {
         try {
+            let worker = this.spawnWorker()
             let skyRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record);
             console.log(skyRecord);
-            await this.private.saveRecordCompletion(skyRecord, this.returnRecord);
-            return this.response()
+            await this.private.saveRecordCompletion(skyRecord, this.returnRecord(worker));
+            return this.response(worker)
         } catch ({ message: error }) {
             return { error }
         }
@@ -103,11 +108,12 @@ export class Database {
      */
     async savePublicRecord(record: iSkyRecord) {
         try {
+            let worker = this.spawnWorker()
             let skyRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record);
             console.log(skyRecord);
-            await this.public.saveRecordCompletion(skyRecord, this.returnRecord);
+            await this.public.saveRecordCompletion(skyRecord, this.returnRecord(worker));
 
-            return this.response()
+            return this.response(worker)
         } catch ({ message: error }) {
             return { error }
         }
@@ -120,10 +126,11 @@ export class Database {
      */
     async getCollection(recordType: string) {
         try {
+            let worker = this.spawnWorker()
             let query = await SKYQuery.queryWithRecordTypePredicate(recordType, null);
-            await this.private.performQueryCompletionHandler(query, this.returnCollection);
+            await this.private.performQueryCompletionHandler(query, this.returnCollection(worker));
 
-            return this.response();
+            return this.response(worker);
         } catch ({ message: error }) {
             return { error };
         }
@@ -136,10 +143,11 @@ export class Database {
      */
     async getUsers() {
         try {
+            let worker = this.spawnWorker()
             let query = await SKYQuery.queryWithRecordTypePredicate("user", null);
-            await this.public.performQueryCompletionHandler(query, this.returnCollection);
+            await this.public.performQueryCompletionHandler(query, this.returnCollection(worker));
 
-            return this.response();
+            return this.response(worker);
         } catch ({ message: error }) {
             return { error };
         }
@@ -155,10 +163,11 @@ export class Database {
      */
     async getPrivateRecord(recordType: string, id: string) {
         try {
+            let worker = this.spawnWorker()
             let recordId = SKYRecordID.recordIDWithRecordTypeName(recordType, this.sliceId(id));
-            await this.private.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord);
+            await this.private.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord(worker));
 
-            return this.response();
+            return this.response(worker);
         } catch ({ message: error }) {
             return { error }
         }
@@ -170,10 +179,11 @@ export class Database {
      */
     async getPublicRecord(recordType: string, id: string) {
         try {
+            let worker = this.spawnWorker()
             let recordId = SKYRecordID.recordIDWithRecordTypeName(recordType, this.sliceId(id));
-            await this.public.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord);
+            await this.public.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord(worker));
 
-            return this.response();
+            return this.response(worker);
         } catch ({ message: error }) {
             return { error }
         }
@@ -187,10 +197,11 @@ export class Database {
      */
     async updatePrivateRecord(record: iSkyRecord, id: string) {
         try {
+            let worker = this.spawnWorker()
             let recordToModify = await SKYRecord.recordWithRecordTypeName(record.recordType, this.sliceId(id));
             let modifiedRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record)
-            await this.private.saveRecordCompletion(modifiedRecord, this.returnRecord);
-            return this.response()
+            await this.private.saveRecordCompletion(modifiedRecord, this.returnRecord(worker));
+            return this.response(worker)
         } catch ({ message: error }) {
             return { error };
         }
@@ -203,10 +214,11 @@ export class Database {
      */
     async updatePublicRecord(record: iSkyRecord, id: string) {
         try {
+            let worker = this.spawnWorker();
             let recordToModify = await SKYRecord.recordWithRecordTypeName(record.recordType, this.sliceId(id));
             let modifiedRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record)
-            await this.public.saveRecordCompletion(modifiedRecord, this.returnRecord);
-            return this.response();
+            await this.public.saveRecordCompletion(modifiedRecord, this.returnRecord(worker));
+            return this.response(worker);
         } catch ({ message: error }) {
             return { error };
         }
