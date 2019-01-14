@@ -1,0 +1,18 @@
+StackLayout {
+    padding: 0;
+    margin: 0;
+}
+Label {
+    width: 100%;
+    text-align: center;
+
+}
+
+ScrollView {
+    height: 80%;
+}
+
+
+Button {
+    border-radius: 100%;
+}

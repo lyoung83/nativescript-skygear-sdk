@@ -1,5 +1,5 @@
 declare var io: any, org: any, java: any;
-import { RecordSaveResponse, databaseWorker, QueryResponse, RecordFetchResponse, RecordDeleteResponse } from "./database-handlers";
+import { RecordSaveResponse, QueryResponse, RecordFetchResponse, RecordDeleteResponse } from "./database-handlers";
 import { iSkyRecord } from "../../skygear-sdk.common";
 var Record = io.skygear.skygear.Record;
 var Query = io.skygear.skygear.Query;
@@ -8,6 +8,7 @@ var Serializer = io.skygear.skygear.RecordSerializer;
 var JSONObject = org.json.JSONObject;
 var Map = java.util.HashMap;
 var Bool = java.lang.Boolean;
+const reservedKeys = ["_id", "_type", "_recordType", "_recordID", "_created_at", "_updated_at", "_ownerID", "_created_by","_updated_by", "_access", "_deleted","_transient"];
 
 export class Database {
     private readonly PUBLIC_DATABASE_NAME = "_public";
@@ -19,13 +20,15 @@ export class Database {
         console.log({ public: this.public, private: this.private })
     }
 
-    private response(worker) {
+    private response(worker: Worker) {
         return new Promise((resolve, reject) => {
             worker.onmessage = (msg) => {
                 if (msg.data.res === "success") {
                     resolve(msg.data.result);
+                    worker.terminate()
                 } else {
                     reject(new Error("Operation Failed"));
+                    worker.terminate()
                 }
             }
         })
@@ -48,8 +51,10 @@ export class Database {
 
     private createMap(record) {
         var map = new Map();
+        var included = (key: string) => reservedKeys.some(reservedKey => reservedKey === key);
+
         for (const key in record) {
-            if (record.hasOwnProperty(key) && key !== "recordType") {
+            if (record.hasOwnProperty(key) && !included(key)) {
                 if (typeof record[key] === "boolean"){
                     map.put(key, Bool.valueOf(record[key]))
                 } else {

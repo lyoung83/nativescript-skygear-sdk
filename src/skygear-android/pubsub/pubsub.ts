@@ -9,10 +9,11 @@ var Bool = java.util.Boolean;
 var channelWorker = new Worker('../result-worker');
 
 export class PubSubResponse extends SKYPubsubHandler {
+    worker: Worker = new Worker('../result-worker');
     handle(data) {
         // console.log(data);
         let result = JSON.parse(data);
-        channelWorker.postMessage({ result, error: null });
+        this.worker.postMessage({ result, error: null });
         return;
     }
 }
@@ -93,8 +94,9 @@ export class PubSub {
 
     async subscribe(channelName: string) {
         try {
-            await this.channel.subscribe(channelName, new PubSubResponse())
-            return this.response();
+            let pubSubChannel = new PubSubResponse()
+            await this.channel.subscribe(channelName, pubSubChannel)
+            return pubSubChannel.worker;
         } catch ({ message: error }) {
             return { error }
         }

@@ -1,0 +1,9 @@
+Listview {
+    margin-top: 50px;
+    height: 80%;
+    max-height: 80%;
+}
+
+Button.action-button {
+    border-radius: 100%;
+}

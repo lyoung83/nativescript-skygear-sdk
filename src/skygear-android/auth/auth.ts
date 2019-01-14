@@ -8,6 +8,23 @@ export class Auth {
         this.auth = skygear.getAuth();
     }
 
+    async getWhoAmI(){
+        try {
+        await this.auth.whoami(new LoginHandler());
+        return new Promise((resolve, reject) => {
+                authWorker.onmessage = (msg) => {
+                    if (msg.data.res === "success") {
+                        resolve(msg.data.result)
+                    } else {
+                        reject(new Error(msg.data.result));
+                    }
+                }
+            })
+        } catch {
+            return { error: "Not currently logged in" }
+        }
+    }
+
 
     async signupWithUsername(username: string, password: string) {
         try {

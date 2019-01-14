@@ -8,16 +8,33 @@ export declare class Database {
     private returnRecord;
     private returnCollection;
     private sliceId(id);
+    private createDictionary(record);
     getPublicDatabase(): any;
     getPrivateDatabase(): any;
-    savePrivateRecord(record: iSkyRecord): Promise<{}>;
-    savePublicRecord(record: iSkyRecord): Promise<{}>;
-    getCollection(recordType: string): Promise<{}>;
-    getUsers(): Promise<{}>;
-    getPrivateRecord(recordType: string, id: string): Promise<{}>;
-    getPublicRecord(recordType: string, id: string): Promise<{}>;
-    updatePrivateRecord(record: iSkyRecord, id: string): Promise<{}>;
-    updatePublicRecord(record: iSkyRecord, id: string): Promise<{}>;
+    savePrivateRecord(record: iSkyRecord): Promise<iSkyRecord | iSkyRecord[] | {
+        error: any;
+    }>;
+    savePublicRecord(record: iSkyRecord): Promise<iSkyRecord | iSkyRecord[] | {
+        error: any;
+    }>;
+    getCollection(recordType: string): Promise<iSkyRecord | iSkyRecord[] | {
+        error: any;
+    }>;
+    getUsers(): Promise<iSkyRecord | iSkyRecord[] | {
+        error: any;
+    }>;
+    getPrivateRecord(recordType: string, id: string): Promise<iSkyRecord | iSkyRecord[] | {
+        error: any;
+    }>;
+    getPublicRecord(recordType: string, id: string): Promise<iSkyRecord | iSkyRecord[] | {
+        error: any;
+    }>;
+    updatePrivateRecord(record: iSkyRecord, id: string): Promise<iSkyRecord | iSkyRecord[] | {
+        error: any;
+    }>;
+    updatePublicRecord(record: iSkyRecord, id: string): Promise<iSkyRecord | iSkyRecord[] | {
+        error: any;
+    }>;
     deletePrivateRecord(recordType: string, id: string): Promise<{
         message: string;
         error?: undefined;

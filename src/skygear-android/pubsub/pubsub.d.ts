@@ -1,5 +1,6 @@
 export declare var SKYPubsubHandler: any;
 export declare class PubSubResponse extends SKYPubsubHandler {
+    worker: Worker;
     handle(data: any): void;
 }
 export declare class PubSub {
@@ -9,6 +10,8 @@ export declare class PubSub {
     private createMap(payloadObject);
     private createArray(array);
     private createPayload(payload);
-    subscribe(channelName: string): Promise<{}>;
+    subscribe(channelName: string): Promise<Worker | {
+        error: any;
+    }>;
     publish(channelName: string, payload: any): Promise<any>;
 }

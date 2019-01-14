@@ -1,0 +1,19 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page"
+  xmlns:ui="nativescript-skygear-sdk">
+  <ActionBar class="action-bar">
+        <NavigationButton />
+        <Label class="action-bar-title" text="Todos" horizontalAlignment="center" />
+    </ActionBar>
+  <StackLayout>
+  <Label class="text-center" text="{{message}}"></Label>
+    <ListView items="{{todos}}" itemTap="{{otherAction}}" class="list-group">
+        <ListView.itemTemplate >
+           <StackLayout class="list-group-item">
+            <Label text="{{task}}" class="text-center"/>
+            <Label text="{{'completed: ' + completed}}" class="text-center" color="{{completed ? 'red' : 'blue'}}"/>
+            </StackLayout>
+        </ListView.itemTemplate>
+    </ListView>
+    <Button text="Create Todo" tap="{{launchAction}}" class="btn btn-default btn-primary action-button"></Button>
+  </StackLayout>
+</Page>

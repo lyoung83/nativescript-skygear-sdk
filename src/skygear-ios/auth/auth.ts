@@ -11,7 +11,7 @@ export class Auth {
     }
 
     private response = () => {
-        return new Promise((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
             authWorker.onmessage = ({ data: { result } }) => {
                 try {
                     resolve(result)
@@ -26,6 +26,15 @@ export class Auth {
         let result = serializeResult(user);
         let error = serializeError(err);
         return authWorker.postMessage({ result, error })
+    }
+
+    async getWhoAmI(){
+        try {
+             await this.auth.getWhoAmIWithCompletionHandler(this.userHandler)
+            return this.response()
+        } catch {
+            return { error: "Not current logged in." }
+        }
     }
 
     /**

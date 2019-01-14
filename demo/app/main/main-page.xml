@@ -1,0 +1,31 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page"
+  xmlns:ui="nativescript-skygear-sdk">
+   <ActionBar class="action-bar">
+        <NavigationButton />
+        <Label class="action-bar-title" text="Main" horizontalAlignment="center" />
+    </ActionBar>
+  <ActivityIndicator busy="{{ isLoading }}" />
+  <StackLayout>
+    <Label text="{{ message }}" class="t-20 text-center c-black" textWrap="true"/>
+    <StackLayout>
+      <Label
+      class="text-center"
+      text="{{users ? 'users: ' + users.length : 'users: 0'}}"
+      backgroundColor="black"
+      color="white"/>
+    </StackLayout>
+    <ScrollView>
+    <ListView
+    items="{{ users }}"
+    itemTap="{{getUser}}"
+    class="list-group" id="listView">
+      <ListView.itemTemplate>
+        <StackLayout class="list-group-item">
+          <Label text="{{username}}" textWrap="true" class="title" height="100%" />
+        </StackLayout>
+      </ListView.itemTemplate>
+    </ListView>
+  </ScrollView>
+  <Button text="Login" tap="{{loginOrRegister}}" class="btn btn-primary btn-active" />
+  </StackLayout>
+</Page>

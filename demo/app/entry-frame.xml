@@ -1,0 +1,11 @@
+<TabView androidTabsPosition="bottom" selectedIndex="0" selectedIndexChanged="onSelectedIndexChanged">
+    <TabViewItem title="Auth">
+        <Frame id="entry-frame" defaultPage="main/main-page"></Frame>
+    </TabViewItem>
+    <TabViewItem title="Todos">
+        <Frame id="todos" defaultPage="todo/todos" />
+    </TabViewItem>
+    <TabViewItem title="PubSub">
+        <Frame id="search" defaultPage="pubsub/pubsub-page" />
+    </TabViewItem>
+</TabView>

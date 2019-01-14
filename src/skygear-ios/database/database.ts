@@ -2,7 +2,13 @@ declare var SKYRecord: any, SKYRecordID: any, SKYQuery: any;
 import * as utils from "tns-core-modules/utils/utils";
 import { serializeResult, serializeError } from "../";
 import { iSkyRecord } from "../../skygear-sdk.common";
-var databaseWorker = new Worker('../result-worker');
+
+interface iWorkerResponse<T> {
+    data: {
+        res: string,
+        result: T
+    }
+}
 
 
 
@@ -22,24 +28,27 @@ export class Database {
         return new Worker('../result-worker')
     }
 
-    private response = (worker: Worker) => new Promise((resolve, reject) => {
-        worker.onmessage = (msg) => {
+    private response = (worker: Worker) => new Promise<iSkyRecord | iSkyRecord[]>((resolve, reject) => {
+        worker.onmessage = (msg: iWorkerResponse<iSkyRecord | iSkyRecord[]>) => {
             if (msg.data.res === "success") {
                 resolve(msg.data.result)
+                worker.terminate();
             } else {
                 reject(new Error("Operation Failed"));
+                worker.terminate();
             }
         };
 
         worker.onerror = error => {
             console.log(error);
             reject({ error });
+            worker.terminate();
         };
     });
 
-    private returnRecord = (worker) => (record, err) => {
+    private returnRecord = (worker: Worker) => (record, err) => {
         try {
-            let result = serializeResult(record);
+            let result:any = serializeResult(record);
             let error = serializeError(err);
             return worker.postMessage({ result, error });
         } catch ({ message: error }) {
@@ -47,10 +56,10 @@ export class Database {
         }
     }
 
-    private returnCollection = (worker) => (records, err) => {
+    private returnCollection = (worker: Worker) => (records, err) => {
         try {
             let newArray = utils.ios.collections.nsArrayToJSArray(records);
-            let result = newArray.map(item => serializeResult(item));
+            let result:any[] = newArray.map(item => serializeResult(item));
             let error = serializeError(err);
             return worker.postMessage({ result, error });
         } catch ({ message: error }) {
@@ -67,6 +76,18 @@ export class Database {
         } else {
             return uuid[1]
         }
+    }
+
+    private createDictionary(record){
+        var values = []
+        let dict;
+        for (const key in record) {
+            if (record.hasOwnProperty(key)) {
+                values.push(record[key]);
+            }
+        }
+        dict = NSDictionary.dictionaryWithObjectsForKeys(values, Object.keys(record));
+        return dict;
     }
 
     /**
@@ -90,9 +111,8 @@ export class Database {
      */
     async savePrivateRecord(record: iSkyRecord) {
         try {
-            let worker = this.spawnWorker()
+            let worker = await this.spawnWorker()
             let skyRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record);
-            console.log(skyRecord);
             await this.private.saveRecordCompletion(skyRecord, this.returnRecord(worker));
             return this.response(worker)
         } catch ({ message: error }) {
@@ -110,7 +130,6 @@ export class Database {
         try {
             let worker = this.spawnWorker()
             let skyRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record);
-            console.log(skyRecord);
             await this.public.saveRecordCompletion(skyRecord, this.returnRecord(worker));
 
             return this.response(worker)
@@ -197,8 +216,9 @@ export class Database {
      */
     async updatePrivateRecord(record: iSkyRecord, id: string) {
         try {
-            let worker = this.spawnWorker()
-            let modifiedRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, record._id, record)
+            let worker = await this.spawnWorker();
+            let dictionary = await this.createDictionary(record);
+            let modifiedRecord = SKYRecord.recordWithRecordTypeNameData(record.recordType, this.sliceId(id), dictionary);
             await this.private.saveRecordCompletion(modifiedRecord, this.returnRecord(worker));
             return this.response(worker)
         } catch ({ message: error }) {
@@ -213,8 +233,9 @@ export class Database {
      */
     async updatePublicRecord(record: iSkyRecord, id: string) {
         try {
-            let worker = this.spawnWorker();
-            let modifiedRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, record._id, record)
+            let worker = await this.spawnWorker();
+            let dictionary = await this.createDictionary(record);
+            let modifiedRecord = SKYRecord.recordWithRecordTypeNameData(record.recordType, this.sliceId(id), dictionary);
             await this.public.saveRecordCompletion(modifiedRecord, this.returnRecord(worker));
             return this.response(worker);
         } catch ({ message: error }) {

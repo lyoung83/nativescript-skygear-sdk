@@ -1,0 +1,19 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="navigatingTo" class="page">
+<Page.actionBar>
+	<ActionBar title="Pubsub Page" icon="" class="action-bar">
+		</ActionBar>
+	</Page.actionBar>
+	<StackLayout>
+		<Label text="{{currentChannel}}" class="text-center"/>
+		<ListView
+    items="{{ messages }}"
+    class="list-group" id="listView" height="85%">
+      <ListView.itemTemplate>
+        <StackLayout class="list-group-item">
+          <Label text="{{$value}}" textWrap="true" class="title" height="100%" />
+        </StackLayout>
+      </ListView.itemTemplate>
+    </ListView>
+	<Button text="Subscriptions" tap="{{channelActions}}" class="btn btn-default btn-primary"/>
+	</StackLayout>
+</Page>
