@@ -1,5 +1,6 @@
 declare var SKYChatExtension: any, SKYChatCacheController: any;
 import * as utils from "tns-core-modules/utils/utils";
+import { serializeResult, serializeError } from "..";
 
 export class Chat {
     private chat;
@@ -37,11 +38,29 @@ export class Chat {
         return new Worker('../result-worker')
     }
 
-    private completionHandler(worker: Worker) {
-        return (result, error) => {
-            worker.postMessage({ result, error });
-            return;
-        };
+    private completionHandler = (worker: Worker) => (record, err: NSError) => {
+        try {
+            console.log(record, record.record);
+            let result:any = serializeResult(record.record);
+            let error = serializeError(err);
+            return worker.postMessage({ result, error });
+        } catch ({ message: error }) {
+            return { error }
+        }
+    }
+
+    private arrayCompletionHandler = (worker: Worker) => (records, err) => {
+        try {
+            let newArray: any[] = utils.ios.collections.nsArrayToJSArray(records);
+            let result:any[] = newArray.map(item => serializeResult(item.record));
+            console.log(result);
+            let error = serializeError(err);
+            return worker.postMessage({ result, error });
+        } catch ({ message: error }) {
+            return { error }
+        }
+
+
     }
 
     async createDirectConversation(userId: string, title: string = "") {
@@ -90,7 +109,7 @@ export class Chat {
     async fetchCurrentConversations() {
         try {
             let worker = this.spawnWorker();
-            await this.chat.fetchConversationsWithCompletion(this.completionHandler(worker));
+            await this.chat.fetchConversationsWithCompletion(this.arrayCompletionHandler(worker));
             return this.response(worker);
         } catch ({ message: error }) {
             return { error }
@@ -102,7 +121,7 @@ export class Chat {
             let worker = this.spawnWorker();
             await this.chat
                 .fetchMessagesWithConversationIDLimitBeforeTimeOrderCompletion(
-                    conversationId, 50, null, 'asc', this.completionHandler(worker)
+                    conversationId, 50, null, 'asc', this.arrayCompletionHandler(worker)
                 );
             return this.response(worker);
         } catch ({ message: error }) {

@@ -17,7 +17,7 @@
     <ScrollView>
     <ListView
     items="{{ users }}"
-    itemTap="{{getUser}}"
+    itemTap="{{userActions}}"
     class="list-group" id="listView">
       <ListView.itemTemplate>
         <StackLayout class="list-group-item">

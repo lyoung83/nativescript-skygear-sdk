@@ -22,6 +22,9 @@ export class HelloWorldModel extends Observable {
         this.set("message", "You are logged in as " + user.username);
       }
     }, error => console.log(error));
+
+    this.skygearSdk.chat.fetchCurrentConversations()
+    .then(r => console.log("chats", r))
   }
 
   loginOrRegister() {
@@ -126,7 +129,29 @@ export class HelloWorldModel extends Observable {
     }
   }
 
-
+ userActions(args: ItemEventData){
+  const actionOptions: ActionOptions = {
+    title: "Auth Actions",
+    message: "If you have an account login, or click register to get started",
+    actions: ["Show Info", "Create Conversation"],
+    cancelButtonText: "Cancel",
+    cancelable: true,
+  }
+  action(actionOptions).then(response => {
+    console.log(response);
+    switch (response) {
+      case "Show Info":
+        this.getUser(args);
+        break;
+      case "Create Conversation":
+        this.createConversation(args);
+        break;
+      default:
+        alert("Action Cancelled")
+        break;
+    }
+  })
+ }
 
 
   getUser(args: ItemEventData) {
@@ -135,6 +160,19 @@ export class HelloWorldModel extends Observable {
       const listView = <ListView>args.object;
       const user = listView.items[index];
       alert(`got user ${user.username} with id ${user._id}`);
+    } catch (e) {
+      alert(e.message);
+    }
+  }
+
+ async createConversation(args: ItemEventData) {
+    try {
+      const index = args.index;
+      const listView = <ListView>args.object;
+      const user = listView.items[index];
+      const conversation: any = await this.skygearSdk.chat.createDirectConversation(user._id, `Conversation with ${user.username}`)
+      console.log(conversation);
+      alert(`created conversation with ${user.username} with id ${conversation._id}`);
     } catch (e) {
       alert(e.message);
     }

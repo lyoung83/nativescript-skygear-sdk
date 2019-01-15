@@ -2,7 +2,10 @@ export declare class Chat {
     private chat;
     constructor(skygear: any);
     getChat(): any;
-    private response();
+    private response(worker);
+    private spawnWorker();
+    private completionHandler;
+    private arrayCompletionHandler;
     createDirectConversation(userId: string, title?: string): Promise<{}>;
     createGroupConversation(userIds: string[], title?: string): Promise<{}>;
     sendMessage(message: string, conversationId: string): Promise<{}>;
