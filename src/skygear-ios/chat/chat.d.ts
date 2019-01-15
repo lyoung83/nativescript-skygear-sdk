@@ -4,6 +4,7 @@ export declare class Chat {
     getChat(): any;
     private response(worker);
     private spawnWorker();
+    private recordHandler(record);
     private completionHandler;
     private arrayCompletionHandler;
     createDirectConversation(userId: string, title?: string): Promise<{}>;

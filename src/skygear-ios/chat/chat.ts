@@ -38,10 +38,17 @@ export class Chat {
         return new Worker('../result-worker')
     }
 
+    private recordHandler(record) {
+        if (record === null) {
+            return {}
+        }
+        return record.record
+    }
+
     private completionHandler = (worker: Worker) => (record, err: NSError) => {
         try {
-            console.log(record, record.record);
-            let result:any = serializeResult(record.record);
+            let r = this.recordHandler(record)
+            let result: any = serializeResult(r.record);
             let error = serializeError(err);
             return worker.postMessage({ result, error });
         } catch ({ message: error }) {
@@ -52,8 +59,7 @@ export class Chat {
     private arrayCompletionHandler = (worker: Worker) => (records, err) => {
         try {
             let newArray: any[] = utils.ios.collections.nsArrayToJSArray(records);
-            let result:any[] = newArray.map(item => serializeResult(item.record));
-            console.log(result);
+            let result: any[] = newArray.map(item => serializeResult(item.record));
             let error = serializeError(err);
             return worker.postMessage({ result, error });
         } catch ({ message: error }) {

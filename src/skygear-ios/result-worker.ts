@@ -1,6 +1,6 @@
 onmessage = msg => {
     if (msg.data == "close"){
-        close();
+        close(0);
         return;
     }
 
@@ -8,12 +8,11 @@ onmessage = msg => {
     var error = msg.data.error;
 
    if (error) {
-       console.log(error);
+        // ignoring postMessage in TS compiler because it's choosing the wrong signature.
         //@ts-ignore
        postMessage({res: "fail", result: error})
        return;
    }
-
     //@ts-ignore
     postMessage({res: result ? "success" : "fail",  result})
 }

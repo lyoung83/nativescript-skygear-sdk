@@ -17,7 +17,7 @@ export class Chat {
                 if (msg.data.res === "success") {
                     resolve(msg.data.result);
                 } else {
-                    reject(msg.data.error);
+                    reject(msg.data.result);
                 }
                 worker.terminate();
             }
@@ -50,7 +50,7 @@ export class Chat {
 
     async createGroupConversation(userIds: string[], title = "") {
         try {
-            let saveCallback = new SKYGetCallback();
+            let saveCallback = new SKYSaveCallback();
             let idArray = userIds.map(id => this.sliceId(id));
             let ids = ios.collections.jsArrayToNSArray(idArray)
             await this.chat.createConversation(ids, title, null, saveCallback);
@@ -65,7 +65,7 @@ export class Chat {
             let conversationCallback = new SKYGetCallback();
             await this.chat.getConversation(this.sliceId(conversationId), conversationCallback)
             let conversation = await this.response(conversationCallback.worker);
-            let saveCallback = new SKYGetCallback();
+            let saveCallback = new SKYSaveCallback();
             await this.chat.sendMessage(conversation, message, null, null, saveCallback);
             return this.response(saveCallback.worker);
         } catch ({ message: error }) {

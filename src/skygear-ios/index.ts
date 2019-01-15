@@ -7,6 +7,10 @@ export var globalWorker = new Worker('./result-worker');
 
 declare var SKYRecordSerializer: any;
 export const serializeResult = (result) => {
+    if (result === null) {
+        console.log("null guard")
+        return result;
+    }
     let _serializer = new SKYRecordSerializer();
     let ref = _serializer.dictionaryWithRecord(result);
     let final = NSJSONSerialization.dataWithJSONObjectOptionsError(ref, NSJSONWritingOptions.PrettyPrinted);
@@ -19,6 +23,11 @@ export const serializeError = (error) => {
     if (error === null) {
         return error;
     }
+    if (error.userInfo.valueForKey("SKYErrorMessage") === "Conversation with the participants already exists") {
+        let _id = error.userInfo.valueForKey("conversation_id");
+        return { _id };
+    }
+    console.log(error)
     return error.userInfo.valueForKey("NSLocalizedDescription");
 
 }
