@@ -40,14 +40,14 @@ export class TodoView extends Observable {
             title: "Update Todo List",
             message: "what would you like to do",
             cancelButtonText: "Cancel",
-            actions: ["Edit Task","Mark as done", "Delete"],
+            actions: ["Edit Task","Toggle 'Completed'", "Delete"],
             cancelable: true // Android only
         };
 
         action(actionOptions).then((result) => {
             if (result === "Edit Task") {
                 this.editTask(tapEvent);
-            } else if (result === "Mark as done") {
+            } else if (result === "Toggle 'Completed'") {
                 this.markAsRead(tapEvent)
             } else if (result === "Delete") {
                this.removeTodo(tapEvent)
@@ -134,7 +134,8 @@ export class TodoView extends Observable {
         try {
             const index = args.index;
             const todo = this.todos[index];
-            todo.completed = true;
+            console.log(todo.completed)
+            todo.completed = !todo.completed;
             let result: any = await this.skygear.db.updatePrivateRecord(todo, todo._id)
             let newTodo = this.todos
             .filter(todo => todo._id !== result._id)

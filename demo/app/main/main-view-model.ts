@@ -20,18 +20,16 @@ export class HelloWorldModel extends Observable {
       if (user.username) {
         this.user = user
         this.set("message", "You are logged in as " + user.username);
+        this.getUsers();
       }
-    }, error => console.log(error));
-
-    this.skygearSdk.chat.fetchCurrentConversations()
-    .then(r => console.log("chats", r))
+    }, error => alert("Token expired please log in"));
   }
 
   loginOrRegister() {
     const actionOptions: ActionOptions = {
       title: "Auth Actions",
       message: "If you have an account login, or click register to get started",
-      actions: ["Login", "Register", "Load Users", "Reset Password", "Logout"],
+      actions: ["Login", "Register", "Reset Password", "Logout"],
       cancelButtonText: "Cancel",
       cancelable: true,
     }
@@ -43,9 +41,6 @@ export class HelloWorldModel extends Observable {
           break;
         case "Register":
           this.registerModal();
-          break;
-        case "Load Users":
-          this.getUsers();
           break;
         case "Reset Password":
           alert("Not Implemented");
@@ -108,11 +103,35 @@ export class HelloWorldModel extends Observable {
     })
   }
 
+  userActions(args: ItemEventData){
+    const actionOptions: ActionOptions = {
+      title: "Auth Actions",
+      message: "If you have an account login, or click register to get started",
+      actions: ["Show Info", "Create Conversation"],
+      cancelButtonText: "Cancel",
+      cancelable: true,
+    }
+    action(actionOptions).then(response => {
+      console.log(response);
+      switch (response) {
+        case "Show Info":
+          this.getUser(args);
+          break;
+        case "Create Conversation":
+          this.createConversation(args);
+          break;
+        default:
+          alert("Action Cancelled")
+          break;
+      }
+    })
+   }
 
   async login(username, password) {
     try {
       this.user = await this.auth.loginWithUsername(username, password);
       this.set("message", `you logged in as ${this.user.username}`);
+      await this.getUsers()
       alert(`Logged in as ${this.user.username}`);
     } catch (e) {
       alert(e.message);
@@ -128,30 +147,6 @@ export class HelloWorldModel extends Observable {
       alert(e.message);
     }
   }
-
- userActions(args: ItemEventData){
-  const actionOptions: ActionOptions = {
-    title: "Auth Actions",
-    message: "If you have an account login, or click register to get started",
-    actions: ["Show Info", "Create Conversation"],
-    cancelButtonText: "Cancel",
-    cancelable: true,
-  }
-  action(actionOptions).then(response => {
-    console.log(response);
-    switch (response) {
-      case "Show Info":
-        this.getUser(args);
-        break;
-      case "Create Conversation":
-        this.createConversation(args);
-        break;
-      default:
-        alert("Action Cancelled")
-        break;
-    }
-  })
- }
 
 
   getUser(args: ItemEventData) {
@@ -183,9 +178,10 @@ export class HelloWorldModel extends Observable {
       if (!this.user){
         throw new Error();
       }
-      let users = await this.skygearSdk.db.getUsers();
+      let userCollection: any = await this.skygearSdk.db.getUsers();
+      let users = userCollection.filter( user => user._id !== this.user._id)
+
       this.set("users", users);
-      alert("Got Users")
     } catch {
       alert("Unable to fetch users please log in");
     }

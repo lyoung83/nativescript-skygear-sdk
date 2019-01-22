@@ -11,16 +11,16 @@ export declare class SKYGetCallback extends GetCallback {
     worker: Worker;
     onSuccess(object: any): void;
     onGetCachedResult(object: any): void;
-    onFail(error: any): void;
+    onFail(err: any): void;
 }
 export declare class SKYGetCollectionCallback extends GetCallback {
     worker: Worker;
     onSuccess(object: any): void;
     onGetCachedResult(object: any): void;
-    onFail(error: any): void;
+    onFail(err: any): void;
 }
 export declare class SKYLambdaCallback extends LambdaCallback {
     worker: Worker;
     onLambdaSuccess(object: any): void;
-    onLambdaFail(error: any): void;
+    onLambdaFail(err: any): void;
 }

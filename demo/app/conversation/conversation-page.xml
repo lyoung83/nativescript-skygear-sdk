@@ -1,0 +1,14 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page">
+    <ActionBar title="Conversations" icon="" class="action-bar"/>
+
+    <ListView
+    items="{{conversations}}"
+    class="list-group">
+        <ListView.itemTemplate>
+        <StackLayout class="list-group-item">
+          <Label text="{{title}}" textWrap="true" class="title" height="100%" />
+          <!-- <Label text="{{_id}}" textWrap="true" class="title" height="100%" /> -->
+        </StackLayout>
+      </ListView.itemTemplate>
+    </ListView>
+</Page>

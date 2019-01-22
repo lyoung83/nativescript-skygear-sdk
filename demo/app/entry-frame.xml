@@ -8,4 +8,7 @@
     <TabViewItem title="PubSub">
         <Frame id="search" defaultPage="pubsub/pubsub-page" />
     </TabViewItem>
+    <TabViewItem title="Conversations">
+        <Frame id="conversation" defaultPage="conversation/conversation-page" />
+    </TabViewItem>
 </TabView>

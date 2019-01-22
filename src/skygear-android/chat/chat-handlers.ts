@@ -54,7 +54,8 @@ export class SKYGetCallback extends GetCallback {
         return;
     }
 
-    onFail(error) {
+    onFail(err) {
+        let error = err.getMessage();
         console.log(error);
         this.worker.postMessage({ result: null, error });
         return;
@@ -75,7 +76,8 @@ export class SKYGetCollectionCallback extends GetCallback {
         return;
     }
 
-    onFail(error) {
+    onFail(err) {
+        let error = err.getMessage();
         console.log(error);
         this.worker.postMessage({ result: null, error });
         return;
@@ -86,12 +88,13 @@ export class SKYLambdaCallback extends LambdaCallback {
     worker: Worker = new Worker('../result-worker');
 
     onLambdaSuccess(object) {
-        let result = JSON.parse(object);
+        let result = JSON.parse(object.toJson());
         this.worker.postMessage({ result, error: null });
         return;
     }
 
-    onLambdaFail(error) {
+    onLambdaFail(err) {
+        let error = err.getMessage();
         this.worker.postMessage({ result: null, error });
         return;
     }
