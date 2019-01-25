@@ -1,5 +1,5 @@
 import { Observable } from "tns-core-modules/ui/page/page";
-import { SkygearSdk } from "nativescript-skygear-sdk";
+import { SkygearSdk, iSkyRecord } from "nativescript-skygear-sdk";
 import { ItemEventData } from "tns-core-modules/ui/list-view/list-view";
 import { action, ActionOptions, prompt } from "tns-core-modules/ui/dialogs";
 
@@ -24,8 +24,6 @@ export class TodoView extends Observable {
             inputType: "text" // text, password, or email
         };
         prompt(promptOptions).then((r) => {
-            console.log("Dialog result: ", r.result);
-            console.log("Text: ", r.text);
             if (r.result){
                 this.createTodo(r.text);
             } else {
@@ -77,12 +75,12 @@ export class TodoView extends Observable {
     async createTodo(todo: string) {
         try {
           let task = new Todo(todo, false);
-          let result:any = await this.skygear.db.savePrivateRecord(task)
+          let result: any = await this.skygear.db.savePrivateRecord(task)
           let newTodos = this.todos.concat(result)
           this.set("todos", newTodos)
           alert(`${todo} created`)
         } catch (error) {
-          console.log(error);
+          alert(error);
         }
       }
 
@@ -134,7 +132,6 @@ export class TodoView extends Observable {
         try {
             const index = args.index;
             const todo = this.todos[index];
-            console.log(todo.completed)
             todo.completed = !todo.completed;
             let result: any = await this.skygear.db.updatePrivateRecord(todo, todo._id)
             let newTodo = this.todos

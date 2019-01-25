@@ -13,9 +13,9 @@ export class HelloWorldModel extends Observable {
 
   constructor(private skygearSdk: SkygearSdk) {
     super();
-    const {auth, message} = skygearSdk;
+    const {auth } = skygearSdk;
     this.auth = auth
-    this.message = message;
+    this.message = "You are not logged in";
     auth.getWhoAmI().then(user => {
       if (user.username) {
         this.user = user
@@ -34,7 +34,6 @@ export class HelloWorldModel extends Observable {
       cancelable: true,
     }
     action(actionOptions).then(response => {
-      console.log(response);
       switch (response) {
         case "Login":
           this.loginModal();
@@ -112,7 +111,6 @@ export class HelloWorldModel extends Observable {
       cancelable: true,
     }
     action(actionOptions).then(response => {
-      console.log(response);
       switch (response) {
         case "Show Info":
           this.getUser(args);
@@ -166,7 +164,6 @@ export class HelloWorldModel extends Observable {
       const listView = <ListView>args.object;
       const user = listView.items[index];
       const conversation: any = await this.skygearSdk.chat.createDirectConversation(user._id, `Conversation with ${user.username}`)
-      console.log(conversation);
       alert(`created conversation with ${user.username} with id ${conversation._id}`);
     } catch (e) {
       alert(e.message);

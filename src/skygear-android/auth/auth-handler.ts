@@ -42,7 +42,6 @@ export class LogoutHandler extends SKYLogoutHandler {
 
     protected onLogoutSuccess(result) {
         authWorker.postMessage({result, error: null});
-        console.log(result)
         return;
     };
 
@@ -53,8 +52,6 @@ export class LogoutHandler extends SKYLogoutHandler {
 
 
     onSuccess(result){
-        console.log("logout success");
-
         return this.onLogoutSuccess(result);
     }
 

@@ -1,0 +1,21 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd"
+navigatingTo="onNavigatedTo"
+navigatingFrom="{{endSubscription}}"
+class="page"
+xmlns:ui="nativescript-skygear-sdk">
+  <ActionBar class="action-bar">
+        <NavigationButton android.class="fa fa-chevron-left" android.text="chevron" tap="onTap"/>
+        <Label class="action-bar-title" text="{{conversation.title}}" horizontalAlignment="center" />
+    </ActionBar>
+  <StackLayout>
+    <ListView itemLoading="onListViewLoaded" items="{{messages}}" class="list-group">
+        <ListView.itemTemplate >
+           <StackLayout class="list-group-item">
+            <Label text="{{body}}" class="text-center"/>
+            <Label text="{{message_status}}" class="text-center" color="{{message_status === 'delivered' ? 'blue' : 'red'}}"/>
+            </StackLayout>
+        </ListView.itemTemplate>
+    </ListView>
+    <Button text="Send Message" tap="{{sendMessage}}" class="btn btn-default btn-primary action-button"></Button>
+  </StackLayout>
+</Page>

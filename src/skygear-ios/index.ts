@@ -8,7 +8,6 @@ export var globalWorker = new Worker('./result-worker');
 declare var SKYRecordSerializer: any;
 export const serializeResult = (result) => {
     if (result === null) {
-        console.log("null guard")
         return result;
     }
     let _serializer = new SKYRecordSerializer();

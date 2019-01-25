@@ -1,14 +1,15 @@
-declare var SKYChatExtension: any, SKYChatCacheController: any;
+declare var SKYChatExtension: any, SKYChatCacheController: any, SKYRecord: any, SKYConversation: any, SKYMessage: any;
 import * as utils from "tns-core-modules/utils/utils";
 import { serializeResult, serializeError } from "..";
 
 export class Chat {
     private chat;
+    readonly conversationRecordType = "conversation";
+    readonly messageRecordType = "message";
     constructor(skygear) {
         let chat = new SKYChatExtension();
         let cache = SKYChatCacheController.defaultController();
         this.chat = chat.initWithContainerCacheController(skygear, cache);
-        console.log(this.chat);
     }
 
     getChat() {
@@ -17,7 +18,7 @@ export class Chat {
 
     private async response(worker: Worker) {
         try {
-            let result = await new Promise((resolve) => {
+            let result = await new Promise<any>((resolve) => {
                 worker.onmessage = (msg) => {
                     if (msg.data.error) {
                         console.log(msg.data.error)
@@ -60,21 +61,67 @@ export class Chat {
         try {
             let newArray: any[] = utils.ios.collections.nsArrayToJSArray(records);
             let result: any[] = newArray.map(item => serializeResult(item.record));
+            let error = err ? serializeError(err) : null;
+            return worker.postMessage({ result, error });
+        } catch ({ message: error }) {
+            return { error }
+        }
+    }
+
+    private recordCompletionHandler = (worker: Worker) => (record, err) => {
+        try {
+            let result: any = record
             let error = serializeError(err);
             return worker.postMessage({ result, error });
         } catch ({ message: error }) {
             return { error }
         }
-
-
     }
 
+    createEventData(event){
+        let record = serializeResult(event.record)
+        let event_type;
+        switch (event.event) {
+            case 0:
+            event_type = "create"
+                break;
+            case 1:
+            event_type = "update"
+                break;
+            case 2:
+            event_type = "delete"
+                break;
+            default:
+            event_type = "invalid event"
+                break;
+        }
+
+        return {
+            record_type: event.recordType,
+            event_type,
+            record
+        }
+    }
+
+    private sliceId(id: string) {
+        let uuid = id.split("/")
+        if (uuid.length === 1) {
+            return uuid[0]
+        } else {
+            return uuid[1]
+        }
+    }
+    /**
+     * create a conversation with a single user.
+     * @param userId {String}
+     * @param title {String}
+     */
     async createDirectConversation(userId: string, title: string = "") {
         try {
             let worker = this.spawnWorker();
             await this.chat
                 .createDirectConversationWithParticipantIDTitleMetadataCompletion(
-                    userId, title, null, this.completionHandler(worker)
+                    this.sliceId(userId), title, null, this.completionHandler(worker)
                 );
             return this.response(worker);
         } catch ({ message: error }) {
@@ -82,6 +129,11 @@ export class Chat {
         }
     }
 
+    /**
+     * create a conversation with several users.
+     * @param userIds userIds of the users you want to start a conversation with
+     * @param title title of this conversation
+     */
     async createGroupConversation(userIds: string[], title: string = "") {
         try {
             let worker = this.spawnWorker();
@@ -94,17 +146,26 @@ export class Chat {
             return { error }
         }
     }
-
-    async sendMessage(message: string, conversationId: string) {
+    /**
+     * send a string message to a conversation.
+     * @param message content of the message
+     * @param conversationRecord entire conversation record to create native record representation
+     */
+    async sendMessage(message: string, conversationRecord) {
         try {
-            var conversationWorker = this.spawnWorker()
-            await this.chat.fetchConversationWithConversationIDFetchLastMessageCompletion(
-                conversationId, false, this.completionHandler(conversationWorker)
-            );
-            let conversation = await this.response(conversationWorker);
+            let record = await SKYRecord.recordWithRecordTypeName(this.conversationRecordType, this.sliceId(conversationRecord._id))
+            for (const key in conversationRecord) {
+                if (conversationRecord.hasOwnProperty(key)) {
+                    record.setValueForKey(conversationRecord[key], key);
+                }
+            }
+            let conversation = await SKYConversation.alloc().initWithRecordData(record);
+            let messageRecord = SKYRecord.recordWithRecordTypeName(this.messageRecordType, null);
+            messageRecord.setValueForKey(message, "body");
+            let skyMessage = SKYMessage.recordWithRecord(messageRecord);
             let worker = this.spawnWorker();
             await this.chat.addMessageToConversationCompletion(
-                message, conversation, this.completionHandler(worker)
+                skyMessage, conversation, this.completionHandler(worker)
             );
             return this.response(worker);
         } catch ({ message: error }) {
@@ -114,8 +175,18 @@ export class Chat {
 
     async fetchCurrentConversations() {
         try {
-            let worker = this.spawnWorker();
+            let worker = await this.spawnWorker();
             await this.chat.fetchConversationsWithCompletion(this.arrayCompletionHandler(worker));
+            return this.response(worker);
+        } catch ({ message: error }) {
+            return { error }
+        }
+    }
+
+    async fetchConversation(conversationId: string) {
+        try {
+            let worker = await this.spawnWorker();
+            await this.chat.fetchConversationWithConversationIDFetchLastMessageCompletion(this.sliceId(conversationId), false, this.recordCompletionHandler(worker));
             return this.response(worker);
         } catch ({ message: error }) {
             return { error }
@@ -124,12 +195,12 @@ export class Chat {
 
     async fetchMessages(conversationId: string) {
         try {
-            let worker = this.spawnWorker();
+            let messageWorker = this.spawnWorker();
             await this.chat
                 .fetchMessagesWithConversationIDLimitBeforeTimeOrderCompletion(
-                    conversationId, 50, null, 'asc', this.arrayCompletionHandler(worker)
+                    this.sliceId(conversationId), 50, null, null, this.arrayCompletionHandler(messageWorker)
                 );
-            return this.response(worker);
+            return this.response(messageWorker);
         } catch ({ message: error }) {
             return { error }
         }
@@ -139,8 +210,36 @@ export class Chat {
         try {
             let worker = this.spawnWorker();
             await this.chat
-                .leaveConversationWithConversationIDCompletion(conversationId, this.completionHandler(worker));
+                .leaveConversationWithConversationIDCompletion(this.sliceId(conversationId), this.completionHandler(worker));
             return this.response(worker);
+        } catch ({ message: error }) {
+            return { error }
+        }
+    }
+
+    async subscribeToConversations() {
+        try {
+            const RecordChangeEvent = "SKYChatDidReceiveRecordChangeNotification"
+            let worker = this.spawnWorker();
+            await this.chat
+                .subscribeToUserChannelWithCompletion((error: NSError) => {
+                    if (error) {
+
+                        throw new Error(serializeError(error))
+                    }
+                });
+            // allows for receiving messages from the backend but doesn't support hot swapping new users,
+            // there may be something that I don't know about that would help with that.
+            NSNotificationCenter.defaultCenter
+                .addObserverForNameObjectQueueUsingBlock(
+                    RecordChangeEvent,
+                    this.chat,
+                    NSOperationQueue.mainQueue, (note) => {
+                        let recordChange = note.userInfo.objectForKey("recordChange")
+                        let result = this.createEventData(recordChange);
+                        worker.postMessage({ result })
+                    })
+            return worker;
         } catch ({ message: error }) {
             return { error }
         }

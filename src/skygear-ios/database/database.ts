@@ -21,15 +21,14 @@ export class Database {
     constructor(skygear) {
         this.public = skygear.publicCloudDatabase;
         this.private = skygear.privateCloudDatabase;
-        console.log({ public: this.public, private: this.private })
     }
 
     private spawnWorker(){
         return new Worker('../result-worker')
     }
 
-    private response = (worker: Worker) => new Promise<iSkyRecord | iSkyRecord[]>((resolve, reject) => {
-        worker.onmessage = (msg: iWorkerResponse<iSkyRecord | iSkyRecord[]>) => {
+    private response = (worker: Worker) => new Promise<any>((resolve, reject) => {
+        worker.onmessage = (msg: iWorkerResponse<any>) => {
             if (msg.data.res === "success") {
                 resolve(msg.data.result)
                 worker.terminate();

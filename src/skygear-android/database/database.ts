@@ -17,7 +17,6 @@ export class Database {
     private public;
     constructor(skygear) {
         this.prepareDB(skygear);
-        console.log({ public: this.public, private: this.private })
     }
 
     private response(worker: Worker) {

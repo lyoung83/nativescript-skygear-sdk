@@ -55,7 +55,6 @@ export class PubsubViewModel extends Observable {
 
 					if (this.channel){
 						// try to terminate channel before starting a new subscription
-						console.log("terminating old subscription")
 						this.channel.terminate();
 					}
 

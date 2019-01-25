@@ -11,7 +11,6 @@ var channelWorker = new Worker('../result-worker');
 export class PubSubResponse extends SKYPubsubHandler {
     worker: Worker = new Worker('../result-worker');
     handle(data) {
-        // console.log(data);
         let result = JSON.parse(data);
         this.worker.postMessage({ result, error: null });
         return;
@@ -58,7 +57,6 @@ export class PubSub {
 
     private createArray(array){
         var newArray;
-        console.log("type", typeof array[0]);
 
         switch (typeof array[0]) {
             case "number":

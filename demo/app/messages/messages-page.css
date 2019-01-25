@@ -1,0 +1,17 @@
+StackLayout {
+    max-height: 95%;
+}
+
+ListView {
+    margin-top: 10px;
+    height: 85%;
+    max-height: 90%;
+}
+
+Button.action-button {
+    border-radius: 100%;
+}
+
+.fa {
+    font-family: FontAwesome, fontawesome-webfont;
+  }

@@ -3,7 +3,8 @@
 
     <ListView
     items="{{conversations}}"
-    class="list-group">
+    class="list-group"
+    itemTap="goToItem">
         <ListView.itemTemplate>
         <StackLayout class="list-group-item">
           <Label text="{{title}}" textWrap="true" class="title" height="100%" />
