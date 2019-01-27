@@ -30,14 +30,14 @@ export class Chat {
         })
     }
 
-    private createJson(object){
+    private createJson(object) {
         var json = new JsonObject();
         for (const key in object) {
             if (object.hasOwnProperty(key)) {
                 var isArray = Array.isArray(object[key]);
-                if (isArray){
+                if (isArray) {
                     json.put(key, this.createArray(object[key]));
-                } else if(typeof object[key] === "object" && !isArray ){
+                } else if (typeof object[key] === "object" && !isArray) {
                     json.put(key, this.createJson(object[key]))
                 } else {
                     json.put(key, object[key])
@@ -66,7 +66,7 @@ export class Chat {
         }
 
         array.forEach((item, index) => {
-            if (typeof item === "object"){
+            if (typeof item === "object") {
                 newArray.put(this.createJson(item));
                 return;
             }
@@ -164,12 +164,21 @@ export class Chat {
         }
     }
 
-    async subscribeToConversations(){
+    async subscribeToConversations() {
         try {
             let subscription = new SKYConversationSubscription()
             await this.chat.subscribeToConversation(subscription);
             return subscription.worker
-        } catch ({message: error}) {
+        } catch ({ message: error }) {
+            return { error }
+        }
+    }
+
+    async unsubscribeFromConversations() {
+        try {
+            await this.chat.unsubscribeFromUserChannel()
+            return "ok"
+        } catch ({ message: error }) {
             return { error }
         }
     }

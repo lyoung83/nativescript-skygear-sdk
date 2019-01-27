@@ -1,5 +1,5 @@
 declare var SKYChatExtension: any, SKYChatCacheController: any, SKYRecord: any, SKYConversation: any, SKYMessage: any;
-import * as utils from "tns-core-modules/utils/utils";
+import { ios } from "tns-core-modules/utils/utils";
 import { serializeResult, serializeError } from "..";
 
 export class Chat {
@@ -59,7 +59,7 @@ export class Chat {
 
     private arrayCompletionHandler = (worker: Worker) => (records, err) => {
         try {
-            let newArray: any[] = utils.ios.collections.nsArrayToJSArray(records);
+            let newArray: any[] = ios.collections.nsArrayToJSArray(records);
             let result: any[] = newArray.map(item => serializeResult(item.record));
             let error = err ? serializeError(err) : null;
             return worker.postMessage({ result, error });
@@ -78,21 +78,31 @@ export class Chat {
         }
     }
 
-    createEventData(event){
+    private createRecord(recordType, data) {
+        let record = SKYRecord.recordWithRecordTypeName(recordType, this.sliceId(data._id))
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                record.setValueForKey(data[key], key);
+            }
+        }
+        return record
+    }
+
+    private createEventData(event) {
         let record = serializeResult(event.record)
         let event_type;
         switch (event.event) {
             case 0:
-            event_type = "create"
+                event_type = "create"
                 break;
             case 1:
-            event_type = "update"
+                event_type = "update"
                 break;
             case 2:
-            event_type = "delete"
+                event_type = "delete"
                 break;
             default:
-            event_type = "invalid event"
+                event_type = "invalid event"
                 break;
         }
 
@@ -153,12 +163,7 @@ export class Chat {
      */
     async sendMessage(message: string, conversationRecord) {
         try {
-            let record = await SKYRecord.recordWithRecordTypeName(this.conversationRecordType, this.sliceId(conversationRecord._id))
-            for (const key in conversationRecord) {
-                if (conversationRecord.hasOwnProperty(key)) {
-                    record.setValueForKey(conversationRecord[key], key);
-                }
-            }
+            let record = this.createRecord(this.conversationRecordType, conversationRecord);
             let conversation = await SKYConversation.alloc().initWithRecordData(record);
             let messageRecord = SKYRecord.recordWithRecordTypeName(this.messageRecordType, null);
             messageRecord.setValueForKey(message, "body");
@@ -172,7 +177,9 @@ export class Chat {
             return { error }
         }
     }
-
+    /**
+     * fetch all conversations that the current user is involved in.
+     */
     async fetchCurrentConversations() {
         try {
             let worker = await this.spawnWorker();
@@ -183,6 +190,10 @@ export class Chat {
         }
     }
 
+    /**
+     * Fetch a single conversation that the current user is involved in.
+     * @param conversationId the skygear id of the conversation.
+     */
     async fetchConversation(conversationId: string) {
         try {
             let worker = await this.spawnWorker();
@@ -193,6 +204,10 @@ export class Chat {
         }
     }
 
+    /**
+     *  Fetch messages for a given conversation.
+     * @param conversationId the skygear id of the conversation
+     */
     async fetchMessages(conversationId: string) {
         try {
             let messageWorker = this.spawnWorker();
@@ -206,6 +221,10 @@ export class Chat {
         }
     }
 
+    /**
+     * Allow the current user to leave a conversation.
+     * @param conversationId the skygear id of the conversation
+     */
     async leaveConversation(conversationId: string) {
         try {
             let worker = this.spawnWorker();
@@ -217,8 +236,13 @@ export class Chat {
         }
     }
 
+    /**
+     * subscribes to the user channel and relays all conversations and messages in conversations
+     * @returns {Worker} worker
+     */
     async subscribeToConversations() {
         try {
+             await this.unsubscribeFromConversations()
             const RecordChangeEvent = "SKYChatDidReceiveRecordChangeNotification"
             let worker = this.spawnWorker();
             await this.chat
@@ -240,6 +264,18 @@ export class Chat {
                         worker.postMessage({ result })
                     })
             return worker;
+        } catch ({ message: error }) {
+            return { error }
+        }
+    }
+
+    /**
+     * Unsubscribe from the user channel
+     */
+    async unsubscribeFromConversations() {
+        try {
+            await this.chat.unsubscribeFromUserChannel()
+            return "ok"
         } catch ({ message: error }) {
             return { error }
         }

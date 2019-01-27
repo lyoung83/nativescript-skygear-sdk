@@ -10,11 +10,8 @@ export declare class Chat {
     private completionHandler;
     private arrayCompletionHandler;
     private recordCompletionHandler;
-    createEventData(event: any): {
-        record_type: any;
-        event_type: any;
-        record: any;
-    };
+    private createRecord(recordType, data);
+    private createEventData(event);
     private sliceId(id);
     createDirectConversation(userId: string, title?: string): Promise<any>;
     createGroupConversation(userIds: string[], title?: string): Promise<any>;
@@ -24,6 +21,9 @@ export declare class Chat {
     fetchMessages(conversationId: string): Promise<any>;
     leaveConversation(conversationId: string): Promise<any>;
     subscribeToConversations(): Promise<Worker | {
+        error: any;
+    }>;
+    unsubscribeFromConversations(): Promise<"ok" | {
         error: any;
     }>;
 }

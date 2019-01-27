@@ -19,4 +19,7 @@ export declare class Chat {
     subscribeToConversations(): Promise<Worker | {
         error: any;
     }>;
+    unsubscribeFromConversations(): Promise<"ok" | {
+        error: any;
+    }>;
 }
