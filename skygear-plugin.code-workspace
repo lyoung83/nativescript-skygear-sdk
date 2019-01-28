@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "/Users/joe/Play/docker-compose/chat"
+		},
+		{
+			"path": "."
 		}
 	],
 	"settings": {
