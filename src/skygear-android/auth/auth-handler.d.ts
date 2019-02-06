@@ -1,6 +1,6 @@
 export declare const SKYAuthHandler: any;
 export declare const SKYLogoutHandler: any;
-export declare var authWorker: Worker;
+export declare var authWorker: any;
 export declare class LoginHandler extends SKYAuthHandler {
     protected onAuthSuccess(result: any): any;
     protected onAuthFail(err: any): any;

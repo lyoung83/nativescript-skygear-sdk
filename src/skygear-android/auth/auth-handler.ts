@@ -1,10 +1,12 @@
+import { spawnWorker } from "..";
+
 declare var io: any;
 var SKYErrorSerializer = io.skygear.skygear.ErrorSerializer;
 
 export const SKYAuthHandler = io.skygear.skygear.AuthResponseHandler;
 export const SKYLogoutHandler = io.skygear.skygear.LogoutResponseHandler;
 
-export var authWorker = new Worker('../result-worker');
+export var authWorker = spawnWorker();
 
 
 export class LoginHandler extends SKYAuthHandler {

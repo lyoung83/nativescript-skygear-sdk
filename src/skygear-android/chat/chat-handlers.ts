@@ -1,3 +1,5 @@
+import { spawnWorker } from "..";
+
 declare var io: any, java: any;
 
 export var GetCallback = io.skygear.plugins.chat.GetCallback;
@@ -24,7 +26,7 @@ const createJson = (chatArray) => {
 }
 
 export class SKYSaveCallback extends SaveCallback {
-    worker: Worker = new Worker('../result-worker');
+    worker: Worker = spawnWorker();
 
     onSuccess(object) {
         let result = JSON.parse(object.toJson());
@@ -46,7 +48,7 @@ export class SKYSaveCallback extends SaveCallback {
 }
 
 export class SKYGetCallback extends GetCallback {
-    worker: Worker = new Worker('../result-worker');
+    worker: Worker = spawnWorker();
 
     onSuccess(object) {
         let result = JSON.parse(object.toJson());
@@ -69,7 +71,7 @@ export class SKYGetCallback extends GetCallback {
 }
 
 export class SKYGetCollectionCallback extends GetCallback {
-    worker: Worker = new Worker('../result-worker');
+    worker: Worker = spawnWorker();
     onSuccess(object) {
         let result = createJson(object);
         this.worker.postMessage({ result, error: null });
@@ -91,7 +93,7 @@ export class SKYGetCollectionCallback extends GetCallback {
 }
 
 export class SKYLambdaCallback extends LambdaCallback {
-    worker: Worker = new Worker('../result-worker');
+    worker: Worker = spawnWorker();
 
     onLambdaSuccess(object) {
         let result = JSON.parse(object.toJson());
@@ -107,7 +109,7 @@ export class SKYLambdaCallback extends LambdaCallback {
 }
 
 export class SKYGetMessagesCallback extends GetMessagesCallback {
-    worker: Worker = new Worker('../result-worker');
+    worker: Worker = spawnWorker();
     onSuccess(object) {
         let result = createJson(object);
         this.worker.postMessage({ result, error: null });

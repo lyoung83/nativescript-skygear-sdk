@@ -1,13 +1,15 @@
+import { spawnWorker } from "..";
+
 declare var io: any;
 export const SKYRecordSaveResponseHandler = io.skygear.skygear.RecordSaveResponseHandler;
 export const SKYRecordQueryResponseHandler = io.skygear.skygear.RecordQueryResponseHandler;
 export const SKYRecordDeleteResponseHandler = io.skygear.skygear.RecordDeleteResponseHandler;
-export var databaseWorker = new Worker('../result-worker');
+// export var databaseWorker = spawnWorker();
 
 var SKYErrorSerializer = io.skygear.skygear.ErrorSerializer;
 
 export class RecordSaveResponse extends SKYRecordSaveResponseHandler {
-    worker: Worker = new Worker('../result-worker');
+    worker: Worker = spawnWorker();
 
     onSaveSuccess(result) {
         this.worker.postMessage({ result, error: null })
@@ -31,7 +33,7 @@ export class RecordSaveResponse extends SKYRecordSaveResponseHandler {
 };
 
 export class QueryResponse extends SKYRecordQueryResponseHandler {
-    worker: Worker = new Worker('../result-worker');
+    worker: Worker = spawnWorker();
 
     onQuerySuccess(result) {
         this.worker.postMessage({ result, error: null })
@@ -57,7 +59,7 @@ export class QueryResponse extends SKYRecordQueryResponseHandler {
 
 
 export class RecordFetchResponse extends SKYRecordQueryResponseHandler {
-    worker: Worker = new Worker('../result-worker');
+    worker: Worker = spawnWorker();
 
     onQuerySuccess(result) {
         this.worker.postMessage({ result, error: null })
@@ -82,7 +84,7 @@ export class RecordFetchResponse extends SKYRecordQueryResponseHandler {
 };
 
 export class RecordDeleteResponse extends SKYRecordDeleteResponseHandler {
-    worker: Worker = new Worker('../result-worker');
+    worker: Worker = spawnWorker();
 
     onDeleteSuccess(result) {
         this.worker.postMessage({ result, error: null })

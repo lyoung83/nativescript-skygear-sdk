@@ -1,5 +1,5 @@
-import { serializeResult, serializeError } from "../";
-var authWorker = new Worker('../result-worker');
+import { serializeResult, serializeError, spawnWorker } from "../";
+var authWorker = spawnWorker();
 
 /**
  * Class for Authentication against a Skygear backend.

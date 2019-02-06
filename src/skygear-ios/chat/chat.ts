@@ -1,6 +1,6 @@
 declare var SKYChatExtension: any, SKYChatCacheController: any, SKYRecord: any, SKYConversation: any, SKYMessage: any;
 import { ios } from "tns-core-modules/utils/utils";
-import { serializeResult, serializeError } from "..";
+import { serializeResult, serializeError, spawnWorker } from "..";
 
 export class Chat {
     private chat;
@@ -33,10 +33,6 @@ export class Chat {
             worker.terminate();
             return { error }
         }
-    }
-
-    private spawnWorker() {
-        return new Worker('../result-worker')
     }
 
     private recordHandler(record) {
@@ -128,7 +124,7 @@ export class Chat {
      */
     async createDirectConversation(userId: string, title: string = "") {
         try {
-            let worker = this.spawnWorker();
+            let worker = spawnWorker();
             await this.chat
                 .createDirectConversationWithParticipantIDTitleMetadataCompletion(
                     this.sliceId(userId), title, null, this.completionHandler(worker)
@@ -146,7 +142,7 @@ export class Chat {
      */
     async createGroupConversation(userIds: string[], title: string = "") {
         try {
-            let worker = this.spawnWorker();
+            let worker = spawnWorker();
             await this.chat
                 .createDirectConversationWithParticipantIDsTitleMetadataCompletion(
                     userIds, title, null, this.completionHandler(worker)
@@ -168,7 +164,7 @@ export class Chat {
             let messageRecord = SKYRecord.recordWithRecordTypeName(this.messageRecordType, null);
             messageRecord.setValueForKey(message, "body");
             let skyMessage = SKYMessage.recordWithRecord(messageRecord);
-            let worker = this.spawnWorker();
+            let worker = spawnWorker();
             await this.chat.addMessageToConversationCompletion(
                 skyMessage, conversation, this.completionHandler(worker)
             );
@@ -182,7 +178,7 @@ export class Chat {
      */
     async fetchCurrentConversations() {
         try {
-            let worker = await this.spawnWorker();
+            let worker = await spawnWorker();
             await this.chat.fetchConversationsWithCompletion(this.arrayCompletionHandler(worker));
             return this.response(worker);
         } catch ({ message: error }) {
@@ -196,7 +192,7 @@ export class Chat {
      */
     async fetchConversation(conversationId: string) {
         try {
-            let worker = await this.spawnWorker();
+            let worker = await spawnWorker();
             await this.chat.fetchConversationWithConversationIDFetchLastMessageCompletion(this.sliceId(conversationId), false, this.recordCompletionHandler(worker));
             return this.response(worker);
         } catch ({ message: error }) {
@@ -210,7 +206,7 @@ export class Chat {
      */
     async fetchMessages(conversationId: string) {
         try {
-            let messageWorker = this.spawnWorker();
+            let messageWorker = spawnWorker();
             await this.chat
                 .fetchMessagesWithConversationIDLimitBeforeTimeOrderCompletion(
                     this.sliceId(conversationId), 50, null, null, this.arrayCompletionHandler(messageWorker)
@@ -227,7 +223,7 @@ export class Chat {
      */
     async leaveConversation(conversationId: string) {
         try {
-            let worker = this.spawnWorker();
+            let worker = spawnWorker();
             await this.chat
                 .leaveConversationWithConversationIDCompletion(this.sliceId(conversationId), this.completionHandler(worker));
             return this.response(worker);
@@ -244,7 +240,7 @@ export class Chat {
         try {
              await this.unsubscribeFromConversations()
             const RecordChangeEvent = "SKYChatDidReceiveRecordChangeNotification"
-            let worker = this.spawnWorker();
+            let worker = spawnWorker();
             await this.chat
                 .subscribeToUserChannelWithCompletion((error: NSError) => {
                     if (error) {

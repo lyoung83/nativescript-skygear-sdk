@@ -1,6 +1,6 @@
 declare var SKYRecord: any, SKYRecordID: any, SKYQuery: any;
 import * as utils from "tns-core-modules/utils/utils";
-import { serializeResult, serializeError } from "../";
+import { serializeResult, serializeError, spawnWorker } from "../";
 import { iSkyRecord } from "../../skygear-sdk.common";
 
 interface iWorkerResponse<T> {
@@ -21,10 +21,6 @@ export class Database {
     constructor(skygear) {
         this.public = skygear.publicCloudDatabase;
         this.private = skygear.privateCloudDatabase;
-    }
-
-    private spawnWorker(){
-        return new Worker('../result-worker')
     }
 
     private response = (worker: Worker) => new Promise<any>((resolve, reject) => {
@@ -110,7 +106,7 @@ export class Database {
      */
     async savePrivateRecord(record: iSkyRecord) {
         try {
-            let worker = await this.spawnWorker()
+            let worker = await spawnWorker()
             let skyRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record);
             await this.private.saveRecordCompletion(skyRecord, this.returnRecord(worker));
             return this.response(worker)
@@ -127,7 +123,7 @@ export class Database {
      */
     async savePublicRecord(record: iSkyRecord) {
         try {
-            let worker = this.spawnWorker()
+            let worker = spawnWorker()
             let skyRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record);
             await this.public.saveRecordCompletion(skyRecord, this.returnRecord(worker));
 
@@ -144,7 +140,7 @@ export class Database {
      */
     async getCollection(recordType: string) {
         try {
-            let worker = this.spawnWorker()
+            let worker = spawnWorker()
             let query = await SKYQuery.queryWithRecordTypePredicate(recordType, null);
             await this.private.performQueryCompletionHandler(query, this.returnCollection(worker));
 
@@ -161,7 +157,7 @@ export class Database {
      */
     async getUsers() {
         try {
-            let worker = this.spawnWorker()
+            let worker = spawnWorker()
             let query = await SKYQuery.queryWithRecordTypePredicate("user", null);
             await this.public.performQueryCompletionHandler(query, this.returnCollection(worker));
 
@@ -181,7 +177,7 @@ export class Database {
      */
     async getPrivateRecord(recordType: string, id: string) {
         try {
-            let worker = this.spawnWorker()
+            let worker = spawnWorker()
             let recordId = SKYRecordID.recordIDWithRecordTypeName(recordType, this.sliceId(id));
             await this.private.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord(worker));
 
@@ -197,7 +193,7 @@ export class Database {
      */
     async getPublicRecord(recordType: string, id: string) {
         try {
-            let worker = this.spawnWorker()
+            let worker = spawnWorker()
             let recordId = SKYRecordID.recordIDWithRecordTypeName(recordType, this.sliceId(id));
             await this.public.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord(worker));
 
@@ -215,7 +211,7 @@ export class Database {
      */
     async updatePrivateRecord(record: iSkyRecord, id: string) {
         try {
-            let worker = await this.spawnWorker();
+            let worker = await spawnWorker();
             let dictionary = await this.createDictionary(record);
             let modifiedRecord = SKYRecord.recordWithRecordTypeNameData(record.recordType, this.sliceId(id), dictionary);
             await this.private.saveRecordCompletion(modifiedRecord, this.returnRecord(worker));
@@ -232,7 +228,7 @@ export class Database {
      */
     async updatePublicRecord(record: iSkyRecord, id: string) {
         try {
-            let worker = await this.spawnWorker();
+            let worker = await spawnWorker();
             let dictionary = await this.createDictionary(record);
             let modifiedRecord = SKYRecord.recordWithRecordTypeNameData(record.recordType, this.sliceId(id), dictionary);
             await this.public.saveRecordCompletion(modifiedRecord, this.returnRecord(worker));

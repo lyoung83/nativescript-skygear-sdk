@@ -3,8 +3,6 @@ export declare class PubSub {
     constructor(skygear: any);
     private response();
     private handler(worker);
-    subscribe(channelName: string): Promise<Worker | {
-        error: any;
-    }>;
+    subscribe(channelName: string): Promise<any>;
     publish(channelName: string, payload: any): Promise<any>;
 }

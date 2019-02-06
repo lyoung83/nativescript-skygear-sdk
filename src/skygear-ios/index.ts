@@ -2,9 +2,7 @@ export { Auth } from './auth/auth';
 export { Database } from './database/database';
 export { PubSub } from './pubsub/pubsub';
 export { Chat } from "./chat/chat";
-export {Cloud} from "./cloud/cloud";
-
-export var globalWorker = new Worker('./result-worker');
+export { Cloud } from "./cloud/cloud";
 
 declare var SKYRecordSerializer: any;
 export const serializeResult = (result) => {
@@ -30,4 +28,13 @@ export const serializeError = (error) => {
     console.log(error)
     return error.userInfo.valueForKey("NSLocalizedDescription");
 
-}
+};
+
+export function spawnWorker() {
+    if (global["TNS_WEBPACK"]) {
+        const WebpackWorker = require("nativescript-worker-loader!./result-worker");
+        return new WebpackWorker();
+    } else {
+        return new Worker('./result-worker');
+    }
+};

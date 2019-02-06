@@ -5,7 +5,6 @@ export declare class Chat {
     constructor(skygear: any);
     getChat(): any;
     private response(worker);
-    private spawnWorker();
     private recordHandler(record);
     private completionHandler;
     private arrayCompletionHandler;
@@ -20,9 +19,7 @@ export declare class Chat {
     fetchConversation(conversationId: string): Promise<any>;
     fetchMessages(conversationId: string): Promise<any>;
     leaveConversation(conversationId: string): Promise<any>;
-    subscribeToConversations(): Promise<Worker | {
-        error: any;
-    }>;
+    subscribeToConversations(): Promise<any>;
     unsubscribeFromConversations(): Promise<"ok" | {
         error: any;
     }>;

@@ -4,4 +4,11 @@ export { PubSub } from './pubsub/pubsub';
 export { Chat } from './chat/chat';
 export { Cloud } from './cloud/cloud';
 
-export var globalWorker = new Worker('./result-worker');
+export function spawnWorker(){
+        if (global["TNS_WEBPACK"]) {
+            const WebpackWorker = require("nativescript-worker-loader!./result-worker");
+            return new WebpackWorker();
+        } else {
+            return new Worker('./result-worker');
+        }
+}

@@ -1,4 +1,4 @@
-import { serializeError } from "..";
+import { serializeError, spawnWorker } from "..";
 
 export class Cloud {
     private skygear
@@ -18,13 +18,11 @@ export class Cloud {
         return dict;
     }
 
-    private spawnWorker() {
-        return new Worker('../result-worker')
-    }
+
 
 
     callLambda(name, args = {}) {
-        let worker = this.spawnWorker();
+        let worker = spawnWorker();
         let dictionary = this.createDictionary(args);
         this.skygear.callLambdaDictionaryArgumentsCompletionHandler(name, dictionary, (res, err: NSError) => {
             let result;

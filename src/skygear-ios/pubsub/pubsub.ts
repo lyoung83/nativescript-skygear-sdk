@@ -1,3 +1,5 @@
+import { spawnWorker } from "..";
+
 var channelWorker = new Worker("../result-worker");
 export class PubSub {
     private channel
@@ -40,7 +42,7 @@ export class PubSub {
      */
    async subscribe(channelName: string) {
         try {
-            let worker = new Worker('../result-worker');
+            let worker = spawnWorker();
             await this.channel.subscribeToHandler(channelName, this.handler(worker))
             return worker
         } catch ({ message: error }) {

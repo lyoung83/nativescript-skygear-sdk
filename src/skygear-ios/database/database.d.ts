@@ -3,7 +3,6 @@ export declare class Database {
     private public;
     private private;
     constructor(skygear: any);
-    private spawnWorker();
     private response;
     private returnRecord;
     private returnCollection;

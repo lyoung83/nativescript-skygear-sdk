@@ -1,9 +1,11 @@
+import { spawnWorker } from "..";
+
 declare var io: any, java: any;
 var Bool = java.lang.Boolean;
 var Map = java.util.HashMap;
 export var LambdaCallback = io.skygear.skygear.LambdaResponseHandler;
 export class SKYLambdaCallback extends LambdaCallback {
-    worker: Worker = new Worker('../result-worker');
+    worker: Worker = spawnWorker();
 
     onLambdaSuccess(object) {
         let result = JSON.parse(object);

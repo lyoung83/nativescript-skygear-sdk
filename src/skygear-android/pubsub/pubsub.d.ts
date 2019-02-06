@@ -6,7 +6,6 @@ export declare class PubSubResponse extends SKYPubsubHandler {
 export declare class PubSub {
     private channel;
     constructor(skygear: any);
-    private response();
     private createMap(payloadObject);
     private createArray(array);
     private createPayload(payload);

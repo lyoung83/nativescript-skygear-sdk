@@ -1,3 +1,5 @@
+import { spawnWorker } from "../../skygear-ios";
+
 declare var io: any, java: any;
 
 var SKYPubsubContainer = io.skygear.skygear.PubsubContainer;
@@ -9,7 +11,7 @@ var Bool = java.util.Boolean;
 var channelWorker = new Worker('../result-worker');
 
 export class PubSubResponse extends SKYPubsubHandler {
-    worker: Worker = new Worker('../result-worker');
+    worker: Worker = spawnWorker();
     handle(data) {
         let result = JSON.parse(data);
         this.worker.postMessage({ result, error: null });
@@ -22,18 +24,6 @@ export class PubSub {
 
     constructor(skygear) {
         this.channel = new SKYPubsubContainer(skygear);
-    }
-
-    private response() {
-        return new Promise((resolve, reject) => {
-            channelWorker.onmessage = (msg) => {
-                if (msg.data.res === "success") {
-                    resolve(msg.data.result);
-                } else {
-                    reject(msg.data.error);
-                }
-            };
-        });
     }
 
     private createMap(payloadObject) {
