@@ -1,12 +1,12 @@
 # Nativescript Skygear-Sdk Plugin
 
-This plugin allows you to use your nativescript application with a skygear.io or skygear-server applicaton
+This plugin allows you to use your nativescript application with a skygear.io or skygear-server application.
 
 
 
 ## Installation
 
-Describe your plugin installation steps. Ideally it would be something like:
+Install the plugin to your nativescript project.
 
 ```javascript
 tns plugin add nativescript-skygear-sdk
@@ -35,12 +35,13 @@ and then you can use it like this:
 
 ## API
 
- The plugin is in 4 separate namespaces.
+ The plugin is in 5 separate namespaces.
 
 | Module | Description |
 | --- | --- |
 | auth | handles signup, login, and logout. --password reset coming soon. |
 | chat | handles interaction with the skygear chat plugin |
+|cloud| handles interaction with skygear cloud functions|
 |db(database)|handles interaction with the public and private cloud database|
 |pubsub| handles interaction with the skygear pubsub module, --will eventually have support for push notifications.|
 

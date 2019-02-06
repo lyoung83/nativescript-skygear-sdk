@@ -13,7 +13,7 @@ export class HelloWorldModel extends Observable {
 
   constructor(private skygearSdk: SkygearSdk) {
     super();
-    const {auth } = skygearSdk;
+    const { auth, cloud } = skygearSdk;
     this.auth = auth
     this.message = "You are not logged in";
     auth.getWhoAmI().then(user => {
@@ -21,8 +21,11 @@ export class HelloWorldModel extends Observable {
         this.user = user
         this.set("message", "You are logged in as " + user.username);
         this.getUsers();
+        cloud.callLambda("hello2")
+        .then(r => console.log(r), e => console.log(e));
       }
     }, error => alert("Token expired please log in"));
+
   }
 
   loginOrRegister() {
