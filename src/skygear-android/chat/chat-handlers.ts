@@ -138,7 +138,7 @@ enum EventTypes {
 
 
 export class SKYConversationSubscription extends ConversationSubscriptionCallback {
-    worker: Worker = new Worker("../result-worker");
+    worker: Worker = spawnWorker();
 
     supportingEventTypes() {
         let array = Array.create(java.lang.String, 3)
@@ -156,7 +156,7 @@ export class SKYConversationSubscription extends ConversationSubscriptionCallbac
 }
 
 export class SKYUserSubscription extends UserSubscriptionCallback {
-    worker: Worker = new Worker("../result-worker");
+    worker: Worker = spawnWorker();
 
     supportingEventTypes() {
         let array = Array.create(java.lang.String, 3)

@@ -1,26 +1,9 @@
 import { spawnWorker } from "..";
 
-var channelWorker = new Worker("../result-worker");
 export class PubSub {
     private channel
     constructor(skygear) {
         this.channel = skygear.pubsub;
-    }
-    private async response() {
-        try {
-            return new Promise((resolve, reject) => {
-                channelWorker.onmessage = (msg) => {
-                    if (msg.data.res === "success") {
-                        resolve(msg.data.result);
-                    } else {
-                        reject(new Error("Unable to join."));
-                    }
-                }
-            })
-        } catch ({message: error}) {
-            return { error }
-        }
-
     }
 
     private handler(worker: Worker){

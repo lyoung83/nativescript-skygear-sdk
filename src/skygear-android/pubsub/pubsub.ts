@@ -1,4 +1,4 @@
-import { spawnWorker } from "../../skygear-ios";
+import { spawnWorker } from "..";
 
 declare var io: any, java: any;
 
@@ -7,8 +7,6 @@ export var SKYPubsubHandler = io.skygear.skygear.PubsubHandler;
 var JSONObject = org.json.JSONObject;
 var Map = java.util.HashMap;
 var Bool = java.util.Boolean;
-
-var channelWorker = new Worker('../result-worker');
 
 export class PubSubResponse extends SKYPubsubHandler {
     worker: Worker = spawnWorker();
