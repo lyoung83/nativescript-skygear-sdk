@@ -11,6 +11,7 @@
   "dependencies": {
     "nativescript-skygear-sdk": "file:../src",
     "nativescript-theme-core": "^1.0.4",
+    "nativescript-ui-sidedrawer": "^5.1.0",
     "nativescript-unit-test-runner": "^0.3.4",
     "tns-core-modules": "^5.1.0"
   },

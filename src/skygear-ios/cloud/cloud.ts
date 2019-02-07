@@ -1,4 +1,11 @@
-import { serializeError, spawnWorker } from "..";
+export const spawnWorker = () => {
+    if (global["TNS_WEBPACK"]) {
+        const WebpackWorker = require("nativescript-worker-loader!../result-worker.js");
+        return new WebpackWorker();
+    } else {
+        return new Worker('../result-worker.js');
+    }
+};
 
 export class Cloud {
     private skygear

@@ -1,14 +1,17 @@
-<TabView androidTabsPosition="bottom" selectedIndex="0" selectedIndexChanged="onSelectedIndexChanged">
-    <TabViewItem title="Auth">
-        <Frame id="entry-frame" defaultPage="main/main-page"></Frame>
-    </TabViewItem>
-    <TabViewItem title="Todos">
-        <Frame id="todos" defaultPage="todo/todos" />
-    </TabViewItem>
-    <TabViewItem title="PubSub">
-        <Frame id="search" defaultPage="pubsub/pubsub-page" />
-    </TabViewItem>
-    <TabViewItem title="Conversations">
-        <Frame id="conversation" defaultPage="conversation/conversation-page" />
-    </TabViewItem>
-</TabView>
+<nsDrawer:RadSideDrawer xmlns:nsDrawer="nativescript-ui-sidedrawer">
+    <nsDrawer:RadSideDrawer.drawerContent>
+        <StackLayout backgroundColor="honeydew">
+        <StackLayout backgroundColor="darkslategray" color="white" height="56" style="text-align: center; vertical-align: center; margin-bottom: 40;">
+                <Label text="Navigation Menu"/>
+        </StackLayout>
+            <Button color="white" class="btn btn-primary" text="Home" tap="navigateToMain"/>
+            <Button color="white" class="btn btn-primary" text="Conversations" tap="navigateToConversations" />
+            <Button color="white" class="btn btn-primary" text="Todos" tap="navigateToTodos" />
+            <Button color="white" class="btn btn-primary" text="Pubsub" tap="navigateToPubsub" />
+        </StackLayout>
+    </nsDrawer:RadSideDrawer.drawerContent>
+
+    <nsDrawer:RadSideDrawer.mainContent>
+        <Frame id="root" defaultPage="main/main-page" />
+    </nsDrawer:RadSideDrawer.mainContent>
+</nsDrawer:RadSideDrawer>

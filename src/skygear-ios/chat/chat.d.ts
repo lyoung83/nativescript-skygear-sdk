@@ -1,3 +1,4 @@
+export declare const spawnWorker: () => any;
 export declare class Chat {
     private chat;
     readonly conversationRecordType: string;

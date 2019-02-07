@@ -4,7 +4,7 @@ navigatingFrom="{{endSubscription}}"
 class="page"
 xmlns:ui="nativescript-skygear-sdk">
   <ActionBar class="action-bar">
-        <NavigationButton android.class="fa fa-chevron-left" android.text="chevron" tap="onTap"/>
+        <NavigationButton android.systemIcon="ic_menu_back" tap="onTap"/>
         <Label class="action-bar-title" text="{{conversation.title}}" horizontalAlignment="center" />
     </ActionBar>
   <StackLayout>
@@ -16,6 +16,7 @@ xmlns:ui="nativescript-skygear-sdk">
             </StackLayout>
         </ListView.itemTemplate>
     </ListView>
-    <Button text="Send Message" tap="{{sendMessage}}" class="btn btn-default btn-primary action-button"></Button>
+    <!-- <Button hint="Send Message" tap="{{sendMessage}}" class="btn btn-default btn-primary action-button"></Button> -->
+    <TextField hint="enter message" text="" returnPress="{{sendText}}" returnKeyType="send"/>
   </StackLayout>
 </Page>

@@ -1,4 +1,11 @@
-import { spawnWorker } from "..";
+export const spawnWorker = () => {
+    if (global["TNS_WEBPACK"]) {
+        const WebpackWorker = require("nativescript-worker-loader!../result-worker.js");
+        return new WebpackWorker();
+    } else {
+        return new Worker('../result-worker.js');
+    }
+}
 
 declare var io: any;
 export const SKYRecordSaveResponseHandler = io.skygear.skygear.RecordSaveResponseHandler;

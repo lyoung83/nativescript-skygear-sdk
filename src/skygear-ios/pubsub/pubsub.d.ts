@@ -1,3 +1,4 @@
+export declare const spawnWorker: () => any;
 export declare class PubSub {
     private channel;
     constructor(skygear: any);

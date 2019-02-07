@@ -1,4 +1,13 @@
-import { serializeResult, serializeError, spawnWorker } from "../";
+import { serializeResult, serializeError } from "../";
+export const spawnWorker = () => {
+    if (global["TNS_WEBPACK"]) {
+        const WebpackWorker = require("nativescript-worker-loader!../result-worker.js");
+        return new WebpackWorker();
+    } else {
+        return new Worker('../result-worker.js');
+    }
+};
+
 var authWorker = spawnWorker();
 
 /**
@@ -33,7 +42,7 @@ export class Auth {
              await this.auth.getWhoAmIWithCompletionHandler(this.userHandler)
             return this.response()
         } catch {
-            return { error: "Not current logged in." }
+            return { error: "Not currently logged in." }
         }
     }
 

@@ -1,6 +1,15 @@
 declare var SKYChatExtension: any, SKYChatCacheController: any, SKYRecord: any, SKYConversation: any, SKYMessage: any;
 import { ios } from "tns-core-modules/utils/utils";
-import { serializeResult, serializeError, spawnWorker } from "..";
+import { serializeResult, serializeError } from "..";
+
+export const spawnWorker = () => {
+    if (global["TNS_WEBPACK"]) {
+        const WebpackWorker = require("nativescript-worker-loader!../result-worker.js");
+        return new WebpackWorker();
+    } else {
+        return new Worker('../result-worker.js');
+    }
+};
 
 export class Chat {
     private chat;

@@ -1,3 +1,4 @@
+export declare const spawnWorker: () => any;
 export declare const SKYAuthHandler: any;
 export declare const SKYLogoutHandler: any;
 export declare var authWorker: any;

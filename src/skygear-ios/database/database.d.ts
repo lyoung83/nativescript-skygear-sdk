@@ -1,4 +1,5 @@
 import { iSkyRecord } from "../../skygear-sdk.common";
+export declare const spawnWorker: () => any;
 export declare class Database {
     private public;
     private private;

@@ -1,3 +1,4 @@
+export declare const spawnWorker: () => any;
 export declare var LambdaCallback: any;
 export declare class SKYLambdaCallback extends LambdaCallback {
     worker: Worker;

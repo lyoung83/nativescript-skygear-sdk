@@ -18,6 +18,5 @@ onmessage = msg => {
 }
 
 onerror = e => {
-    console.log("error in worker:", e)
     return true;
 }

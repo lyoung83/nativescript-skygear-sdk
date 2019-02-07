@@ -3,6 +3,8 @@ import { Page } from "tns-core-modules/ui/page/page";
 import { skygearSdk } from "~/sdk";
 import { ConversationPage } from "./conversation-page-view-model";
 import { ItemEventData, ListView } from "tns-core-modules/ui/list-view/list-view";
+import { RadSideDrawer } from "nativescript-ui-sidedrawer";
+import { getRootView } from "tns-core-modules/application/application";
 
 export function pageLoaded(args: EventData){
     let page: Page = <Page>args.object;
@@ -23,4 +25,9 @@ export function goToItem(args: ItemEventData): void {
             curve: "ease"
         }
     });
+}
+
+export function showSideDrawer(args: EventData){
+    const drawer: RadSideDrawer = <RadSideDrawer>getRootView()
+    drawer.showDrawer();
 }

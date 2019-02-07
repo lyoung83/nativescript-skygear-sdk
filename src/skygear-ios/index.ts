@@ -29,12 +29,3 @@ export const serializeError = (error) => {
     return error.userInfo.valueForKey("NSLocalizedDescription");
 
 };
-
-export function spawnWorker() {
-    if (global["TNS_WEBPACK"]) {
-        const WebpackWorker = require("nativescript-worker-loader!./result-worker");
-        return new WebpackWorker();
-    } else {
-        return new Worker('./result-worker');
-    }
-};

@@ -1,7 +1,16 @@
 declare var SKYRecord: any, SKYRecordID: any, SKYQuery: any;
 import * as utils from "tns-core-modules/utils/utils";
-import { serializeResult, serializeError, spawnWorker } from "../";
+import { serializeResult, serializeError } from "../";
 import { iSkyRecord } from "../../skygear-sdk.common";
+
+export const spawnWorker = () => {
+    if (global["TNS_WEBPACK"]) {
+        const WebpackWorker = require("nativescript-worker-loader!../result-worker.js");
+        return new WebpackWorker();
+    } else {
+        return new Worker('../result-worker.js');
+    }
+};
 
 interface iWorkerResponse<T> {
     data: {
@@ -157,7 +166,7 @@ export class Database {
      */
     async getUsers() {
         try {
-            let worker = spawnWorker()
+            let worker = spawnWorker();
             let query = await SKYQuery.queryWithRecordTypePredicate("user", null);
             await this.public.performQueryCompletionHandler(query, this.returnCollection(worker));
 

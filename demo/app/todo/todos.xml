@@ -1,8 +1,12 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page"
   xmlns:ui="nativescript-skygear-sdk">
-  <ActionBar class="action-bar">
-        <NavigationButton />
-        <Label class="action-bar-title" text="Todos" horizontalAlignment="center" />
+  <ActionBar title="Todos" class="action-bar">
+         <android>
+        <NavigationButton android.systemIcon="ic_menu_info_details" tap="showSideDrawer" />
+      </android>
+      <ios>
+        <ActionItem text="menu" ios.position="left" tap="showSideDrawer" />
+      </ios>
     </ActionBar>
   <StackLayout>
   <Label class="text-center" text="{{message}}"></Label>

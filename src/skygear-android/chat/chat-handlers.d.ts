@@ -1,3 +1,4 @@
+export declare const spawnWorker: () => any;
 export declare var GetCallback: any;
 export declare var LambdaCallback: any;
 export declare var SaveCallback: any;

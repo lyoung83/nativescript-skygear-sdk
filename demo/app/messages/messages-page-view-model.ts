@@ -1,4 +1,5 @@
 import { Observable, EventData } from "tns-core-modules/ui/page/page";
+import { TextField } from "tns-core-modules/ui/text-field/text-field";
 import { SkygearSdk } from "nativescript-skygear-sdk";
 import { prompt, action, ActionOptions } from "tns-core-modules/ui/dialogs/dialogs";
 import { ListView, ItemEventData } from "tns-core-modules/ui/list-view/list-view";
@@ -31,6 +32,16 @@ export class Messages extends Observable {
                     alert("Action Cancelled");
                 }
             });
+    }
+
+    async sendText(args){
+        try {
+            const field: TextField = <TextField>args.object;
+            await this.skygear.chat.sendMessage(field.text, this.conversation);
+            field.text = ""
+        } catch ({message: error}) {
+            alert(error)
+        }
     }
 
 

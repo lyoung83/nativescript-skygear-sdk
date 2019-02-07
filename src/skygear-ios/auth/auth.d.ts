@@ -1,3 +1,4 @@
+export declare const spawnWorker: () => any;
 export declare class Auth {
     private auth;
     constructor(skygear: any);

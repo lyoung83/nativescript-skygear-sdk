@@ -1,3 +1,4 @@
+export declare const spawnWorker: () => any;
 export declare var SKYPubsubHandler: any;
 export declare class PubSubResponse extends SKYPubsubHandler {
     worker: Worker;

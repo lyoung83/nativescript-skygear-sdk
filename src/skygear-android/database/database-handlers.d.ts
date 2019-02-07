@@ -1,3 +1,4 @@
+export declare const spawnWorker: () => any;
 export declare const SKYRecordSaveResponseHandler: any;
 export declare const SKYRecordQueryResponseHandler: any;
 export declare const SKYRecordDeleteResponseHandler: any;
