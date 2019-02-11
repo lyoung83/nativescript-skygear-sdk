@@ -6,7 +6,7 @@ import { ItemEventData, ListView } from "tns-core-modules/ui/list-view/list-view
 
 export function onNavigatedTo(args: NavigatedData): void {
     let page = <Page>args.object;
-    page.bindingContext = new Messages(page.navigationContext, skygearSdk)
+    page.bindingContext = new Messages(page.navigationContext, skygearSdk);
 
 
 }
@@ -17,9 +17,9 @@ export function onTap(args: EventData) {
     page.frame.goBack();
 }
 
-export function onListViewLoaded(args: ItemEventData){
+export function onListViewLoaded(args: ItemEventData) {
     let listView: ListView = <ListView>args.object;
-    let index = listView.items.length -1
+    let index = listView.items.length - 1;
     setTimeout(() => {
         listView.scrollToIndex(index);
     }, 200);

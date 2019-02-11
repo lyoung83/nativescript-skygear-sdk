@@ -5,6 +5,6 @@ import { skygearSdk } from "../sdk";
 
 
 export function navigatingTo(args: EventData) {
-	let page = <Page>args.object;
-	page.bindingContext = new PubsubViewModel(skygearSdk);
+  let page = <Page>args.object;
+  page.bindingContext = new PubsubViewModel(skygearSdk);
 }

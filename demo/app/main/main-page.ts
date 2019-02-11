@@ -1,6 +1,6 @@
 import * as observable from 'tns-core-modules/data/observable';
 import { Page } from 'tns-core-modules/ui/page';
-import { skygearSdk } from '../sdk'
+import { skygearSdk } from '../sdk';
 
 import {HelloWorldModel} from './main-view-model';
 

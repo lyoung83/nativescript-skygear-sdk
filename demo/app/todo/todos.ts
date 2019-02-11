@@ -5,6 +5,6 @@ import { skygearSdk } from "~/sdk";
 
 
 export function pageLoaded(args: observable.EventData) {
-    let page:Page = <Page>args.object;
+    let page: Page = <Page>args.object;
     page.bindingContext = new TodoView(skygearSdk);
 }
