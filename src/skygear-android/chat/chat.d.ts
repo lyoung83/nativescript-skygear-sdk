@@ -1,7 +1,7 @@
-export declare var ChatContainer: any;
-export declare var Conversation: any;
-export declare var Record: any;
-export declare var Serializer: any;
+export declare const ChatContainer: any;
+export declare const Conversation: any;
+export declare const Record: any;
+export declare const Serializer: any;
 export declare class Chat {
     private chat;
     constructor(skygear: any);

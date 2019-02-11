@@ -1,7 +1,7 @@
 declare var io: any, java: any;
-var Bool = java.lang.Boolean;
-var Map = java.util.HashMap;
-export var LambdaCallback = io.skygear.skygear.LambdaResponseHandler;
+const Bool = java.lang.Boolean;
+const Map = java.util.HashMap;
+export const LambdaCallback = io.skygear.skygear.LambdaResponseHandler;
 export class SKYLambdaCallback extends LambdaCallback {
     worker: Worker = new Worker('../result-worker');
 
@@ -19,23 +19,23 @@ export class SKYLambdaCallback extends LambdaCallback {
 }
 
 export class Cloud {
-    private skygear
+    private skygear;
     constructor(skygear) {
         this.skygear = skygear;
     }
 
     private createMap(object) {
-        var map = new Map();
+        let map = new Map();
         for (const key in object) {
             if (object.hasOwnProperty(key)) {
                 if (typeof object[key] === "boolean") {
-                    map.put(key, Bool.valueOf(object[key]))
+                    map.put(key, Bool.valueOf(object[key]));
                 } else {
-                    map.put(key, object[key])
+                    map.put(key, object[key]);
                 }
             }
         }
-        return map
+        return map;
     }
 
     callLambda(name, args = {}) {
@@ -46,12 +46,12 @@ export class Cloud {
         return new Promise<any>((resolve, reject) => {
             response.worker.onmessage = (msg) => {
                 if (msg.data.res === "success") {
-                    resolve(msg.data.result)
+                    resolve(msg.data.result);
                 } else {
-                    reject(msg.data.result)
+                    reject(msg.data.result);
                 }
                 response.worker.terminate();
-            }
+            };
         });
     }
 }

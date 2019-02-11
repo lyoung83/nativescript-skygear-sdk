@@ -1,9 +1,9 @@
 import { Observable } from "tns-core-modules/ui/page/page";
-import { SkygearSdk, iSkyRecord } from "nativescript-skygear-sdk";
+import { SkygearSdk } from "nativescript-skygear-sdk";
 import { ItemEventData } from "tns-core-modules/ui/list-view/list-view";
 import { action, ActionOptions, prompt } from "tns-core-modules/ui/dialogs";
 
-import { Todo, iTodo } from "~/model";
+import { Todo, iTodo } from "../model";
 
 export class TodoView extends Observable {
     message: string

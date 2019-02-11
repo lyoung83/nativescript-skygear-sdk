@@ -1,14 +1,14 @@
 declare var io: any, org: any, java: any;
 import { RecordSaveResponse, QueryResponse, RecordFetchResponse, RecordDeleteResponse } from "./database-handlers";
-import { iSkyRecord } from "../../skygear-sdk.common";
-var Record = io.skygear.skygear.Record;
-var Query = io.skygear.skygear.Query;
-var SKYDatabase = io.skygear.skygear.Database;
-var Serializer = io.skygear.skygear.RecordSerializer;
-var JSONObject = org.json.JSONObject;
-var Map = java.util.HashMap;
-var Bool = java.lang.Boolean;
-const reservedKeys = ["_id", "_type", "_recordType", "_recordID", "_created_at", "_updated_at", "_ownerID", "_created_by","_updated_by", "_access", "_deleted","_transient"];
+import { ISkyRecord } from "../../skygear-sdk.common";
+const Record = io.skygear.skygear.Record;
+const Query = io.skygear.skygear.Query;
+const SKYDatabase = io.skygear.skygear.Database;
+const Serializer = io.skygear.skygear.RecordSerializer;
+const JSONObject = org.json.JSONObject;
+const Map = java.util.HashMap;
+const Bool = java.lang.Boolean;
+const reservedKeys = ["_id", "_type", "_recordType", "_recordID", "_created_at", "_updated_at", "_ownerID", "_created_by", "_updated_by", "_access", "_deleted", "_transient"];
 
 export class Database {
     private readonly PUBLIC_DATABASE_NAME = "_public";
@@ -24,21 +24,21 @@ export class Database {
             worker.onmessage = (msg) => {
                 if (msg.data.res === "success") {
                     resolve(msg.data.result);
-                    worker.terminate()
+                    worker.terminate();
                 } else {
                     reject(new Error("Operation Failed"));
-                    worker.terminate()
+                    worker.terminate();
                 }
-            }
-        })
+            };
+        });
     }
 
     private sliceId(id: string) {
-        let uuid = id.split("/")
+        let uuid = id.split("/");
         if (uuid.length === 1) {
-            return uuid[0]
+            return uuid[0];
         } else {
-            return uuid[1]
+            return uuid[1];
         }
     }
 
@@ -49,19 +49,19 @@ export class Database {
     }
 
     private createMap(record) {
-        var map = new Map();
-        var included = (key: string) => reservedKeys.some(reservedKey => reservedKey === key);
+        const map = new Map();
+        const included = (key: string) => reservedKeys.some(reservedKey => reservedKey === key);
 
         for (const key in record) {
             if (record.hasOwnProperty(key) && !included(key)) {
-                if (typeof record[key] === "boolean"){
-                    map.put(key, Bool.valueOf(record[key]))
+                if (typeof record[key] === "boolean") {
+                    map.put(key, Bool.valueOf(record[key]));
                 } else {
-                    map.put(key, record[key])
+                    map.put(key, record[key]);
                 }
             }
         }
-        return map
+        return map;
     }
 
     getPublicDatabase() {
@@ -72,7 +72,7 @@ export class Database {
         return this.private;
     }
 
-    async savePrivateRecord(record: iSkyRecord) {
+    async savePrivateRecord(record: ISkyRecord) {
         try {
             let map = await this.createMap(record);
             let recordToSave = new Record(record.recordType, map);
@@ -80,12 +80,11 @@ export class Database {
             await this.private.save(recordToSave, databaseHandler);
             return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
+    }
 
-    };
-
-    async savePublicRecord(record: iSkyRecord) {
+    async savePublicRecord(record: ISkyRecord) {
         try {
             let map = await this.createMap(record);
             let recordToSave = new Record(record.recordType, map);
@@ -93,9 +92,10 @@ export class Database {
             await this.public.save(recordToSave, databaseHandler);
             return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
-    };
+    }
+
     async getCollection(recordType: string) {
         try {
             let query = new Query(recordType);
@@ -103,9 +103,9 @@ export class Database {
             await this.private.query(query, databaseHandler);
             return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
-    };
+    }
 
     async getUsers() {
         try {
@@ -114,7 +114,7 @@ export class Database {
             await this.public.query(query, databaseHandler);
             return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
     }
     async getPrivateRecord(recordType: string, id: string) {
@@ -125,45 +125,49 @@ export class Database {
             await this.private.query(query, databaseHandler);
             return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
 
-    };
+    }
+
     async getPublicRecord(recordType: string, id: string) {
         try {
             let query = new Query(recordType)
                 .equalTo("_id", this.sliceId(id));
-                let databaseHandler = new RecordFetchResponse();
+            let databaseHandler = new RecordFetchResponse();
             await this.public.query(query, databaseHandler);
             return this.response(databaseHandler.worker);
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
-    };
-    async updatePrivateRecord(record: iSkyRecord, id: string) {
+    }
+
+    async updatePrivateRecord(record: ISkyRecord, id: string) {
         try {
-            let map = this.createMap(record)
+            let map = this.createMap(record);
             let updatedRecord = new Record(record.recordType, this.sliceId(id), map);
             let databaseHandler = new RecordSaveResponse();
             await this.private.save(updatedRecord, databaseHandler);
             return this.response(databaseHandler.worker);
 
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
-    };
-    async updatePublicRecord(record: iSkyRecord, id: string) {
+    }
+
+    async updatePublicRecord(record: ISkyRecord, id: string) {
         try {
-            let map = this.createMap(record)
+            let map = this.createMap(record);
             let updatedRecord = new Record(record.recordType, this.sliceId(id), map);
             let databaseHandler = new RecordSaveResponse();
             await this.public.save(updatedRecord, databaseHandler);
             return this.response(databaseHandler.worker);
 
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
-    };
+    }
+
     async deletePrivateRecord(recordType: string, id: string) {
         try {
             let recordToDelete = new Record(recordType, this.sliceId(id), null);
@@ -172,9 +176,10 @@ export class Database {
             return this.response(databaseHandler.worker);
 
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
-    };
+    }
+
     async deletePublicRecord(recordType: string, id: string) {
         try {
             let recordToDelete = new Record(recordType, this.sliceId(id), null);
@@ -183,7 +188,7 @@ export class Database {
             return this.response(databaseHandler.worker);
 
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
-    };
+    }
 }

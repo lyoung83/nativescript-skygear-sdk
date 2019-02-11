@@ -1,11 +1,11 @@
 import { serializeResult, serializeError } from "../";
-var authWorker = new Worker('../result-worker');
+const authWorker = new Worker('../result-worker');
 
 /**
  * Class for Authentication against a Skygear backend.
  */
 export class Auth {
-    private auth
+    private auth;
     constructor(skygear) {
         this.auth = skygear.auth;
     }
@@ -14,26 +14,26 @@ export class Auth {
         return new Promise<any>((resolve, reject) => {
             authWorker.onmessage = ({ data: { result } }) => {
                 try {
-                    resolve(result)
+                    resolve(result);
                 } catch {
                     reject(new Error("Failed data fetch"));
                 }
-            }
+            };
         });
     }
 
     private userHandler = (user, err) => {
         let result = serializeResult(user);
         let error = serializeError(err);
-        return authWorker.postMessage({ result, error })
+        return authWorker.postMessage({ result, error });
     }
 
-    async getWhoAmI(){
+    async getWhoAmI() {
         try {
-             await this.auth.getWhoAmIWithCompletionHandler(this.userHandler)
-            return this.response()
+            await this.auth.getWhoAmIWithCompletionHandler(this.userHandler);
+            return this.response();
         } catch {
-            return { error: "Not current logged in." }
+            return { error: "Not currently logged in." };
         }
     }
 
@@ -46,9 +46,9 @@ export class Auth {
         try {
             await this.auth
                 .signupWithUsernamePasswordCompletionHandler(username, password, this.userHandler);
-            return this.response()
+            return this.response();
         } catch {
-            return { error: "duplicate record or missing information" }
+            return { error: "duplicate record or missing information" };
         }
 
     }
@@ -64,7 +64,7 @@ export class Auth {
                 .signupWithEmailPasswordCompletionHandler(email, password, this.userHandler);
             return this.response();
         } catch {
-            return { error: "duplicate record or missing information" }
+            return { error: "duplicate record or missing information" };
         }
     }
 
@@ -79,7 +79,7 @@ export class Auth {
                 .loginWithUsernamePasswordCompletionHandler(username, password, this.userHandler);
             return this.response();
         } catch ({ message }) {
-            return { error: message }
+            return { error: message };
         }
 
     }
@@ -97,7 +97,7 @@ export class Auth {
             return this.response();
 
         } catch {
-            return { error: "unable to login" }
+            return { error: "unable to login" };
         }
     }
 
@@ -110,7 +110,7 @@ export class Auth {
             return this.response();
 
         } catch {
-            return { error: "Logout Failed" }
+            return { error: "Logout Failed" };
         }
     }
 

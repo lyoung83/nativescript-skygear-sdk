@@ -1,7 +1,7 @@
 export declare const SKYRecordSaveResponseHandler: any;
 export declare const SKYRecordQueryResponseHandler: any;
 export declare const SKYRecordDeleteResponseHandler: any;
-export declare var databaseWorker: Worker;
+export declare const databaseWorker: Worker;
 export declare class RecordSaveResponse extends SKYRecordSaveResponseHandler {
     worker: Worker;
     onSaveSuccess(result: any): any;

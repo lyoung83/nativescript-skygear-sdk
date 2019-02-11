@@ -1,13 +1,12 @@
-import { serializeError } from "..";
 
 export class Cloud {
-    private skygear
+    private skygear;
     constructor(skygear) {
         this.skygear = skygear;
     }
 
     private createDictionary(object) {
-        var values = []
+        let values = [];
         let dict;
         for (const key in object) {
             if (object.hasOwnProperty(key)) {
@@ -19,7 +18,7 @@ export class Cloud {
     }
 
     private spawnWorker() {
-        return new Worker('../result-worker')
+        return new Worker('../result-worker');
     }
 
 
@@ -29,17 +28,17 @@ export class Cloud {
         this.skygear.callLambdaDictionaryArgumentsCompletionHandler(name, dictionary, (res, err: NSError) => {
             let result;
             let error;
-            if (res){
-            let test = NSJSONSerialization.dataWithJSONObjectOptionsError(res, NSJSONWritingOptions.PrettyPrinted)
-            var jsonString = NSString.alloc().initWithDataEncoding(test, NSUTF8StringEncoding);
-            result = JSON.parse(jsonString.toString());
+            if (res) {
+                let test = NSJSONSerialization.dataWithJSONObjectOptionsError(res, NSJSONWritingOptions.PrettyPrinted);
+                let jsonString = NSString.alloc().initWithDataEncoding(test, NSUTF8StringEncoding);
+                result = JSON.parse(jsonString.toString());
             }
-            if(err){
+            if (err) {
                 error = err.userInfo.valueForKey("NSLocalizedDescription");
             }
             worker.postMessage({ result, error });
             return;
-        })
+        });
 
         return new Promise<any>((resolve, reject) => {
             worker.onmessage = (msg) => {
@@ -49,7 +48,7 @@ export class Cloud {
                     reject(msg.data.result);
                 }
                 worker.terminate();
-            }
-        })
+            };
+        });
     }
 }

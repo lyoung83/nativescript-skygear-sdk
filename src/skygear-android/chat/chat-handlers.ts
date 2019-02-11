@@ -1,17 +1,17 @@
-declare var io: any, java: any;
+declare const io: any, java: any;
 
-export var GetCallback = io.skygear.plugins.chat.GetCallback;
-export var LambdaCallback = io.skygear.skygear.LambdaResponseHandler;
-export var SaveCallback = io.skygear.plugins.chat.SaveCallback;
-export var Serializer = io.skygear.skygear.RecordSerializer;
-export var GetMessagesCallback = io.skygear.plugins.chat.GetMessagesCallback;
-export var ConversationSubscriptionCallback = io.skygear.plugins.chat.ConversationSubscriptionCallback;
-export var UserSubscriptionCallback = io.skygear.plugins.chat.UserChannelSubscriptionCallback;
+export const GetCallback = io.skygear.plugins.chat.GetCallback;
+export const LambdaCallback = io.skygear.skygear.LambdaResponseHandler;
+export const SaveCallback = io.skygear.plugins.chat.SaveCallback;
+export const Serializer = io.skygear.skygear.RecordSerializer;
+export const GetMessagesCallback = io.skygear.plugins.chat.GetMessagesCallback;
+export const ConversationSubscriptionCallback = io.skygear.plugins.chat.ConversationSubscriptionCallback;
+export const UserSubscriptionCallback = io.skygear.plugins.chat.UserChannelSubscriptionCallback;
 
 const createJson = (chatArray) => {
     try {
         let jsArray = [];
-        let newArray = chatArray.toArray()
+        let newArray = chatArray.toArray();
         for (let index = 0; index < newArray.length; index++) {
             jsArray.push(newArray[index]);
         }
@@ -21,7 +21,7 @@ const createJson = (chatArray) => {
     } catch {
         return JSON.parse(chatArray.toJson());
     }
-}
+};
 
 export class SKYSaveCallback extends SaveCallback {
     worker: Worker = new Worker('../result-worker');
@@ -35,10 +35,10 @@ export class SKYSaveCallback extends SaveCallback {
     onFail(error) {
         try {
             let _id = error.getConversationId();
-            this.worker.postMessage({ result: { _id }, error: null })
+            this.worker.postMessage({ result: { _id }, error: null });
             return;
         } catch {
-            let err = error.getMessage()
+            let err = error.getMessage();
             this.worker.postMessage({ result: null, error: err });
             return;
         }
@@ -139,7 +139,7 @@ export class SKYConversationSubscription extends ConversationSubscriptionCallbac
     worker: Worker = new Worker("../result-worker");
 
     supportingEventTypes() {
-        let array = Array.create(java.lang.String, 3)
+        let array = Array.create(java.lang.String, 3);
         array[0] = EventTypes.EVENT_TYPE_CREATE;
         array[1] = EventTypes.EVENT_TYPE_DELETE;
         array[2] = EventTypes.EVENT_TYPE_UPDATE;
@@ -147,8 +147,8 @@ export class SKYConversationSubscription extends ConversationSubscriptionCallbac
     }
 
     notify(event: string, conversation: any) {
-        let result = JSON.parse(conversation)
-        this.worker.postMessage({ result, error: null })
+        let result = JSON.parse(conversation);
+        this.worker.postMessage({ result, error: null });
         return;
     }
 }
@@ -157,7 +157,7 @@ export class SKYUserSubscription extends UserSubscriptionCallback {
     worker: Worker = new Worker("../result-worker");
 
     supportingEventTypes() {
-        let array = Array.create(java.lang.String, 3)
+        let array = Array.create(java.lang.String, 3);
         array[0] = EventTypes.EVENT_TYPE_CREATE;
         array[1] = EventTypes.EVENT_TYPE_DELETE;
         array[2] = EventTypes.EVENT_TYPE_UPDATE;
@@ -165,8 +165,8 @@ export class SKYUserSubscription extends UserSubscriptionCallback {
     }
 
     notify(_: string, data: any) {
-        let result = JSON.parse(data)
-        this.worker.postMessage({ result, error: null })
+        let result = JSON.parse(data);
+        this.worker.postMessage({ result, error: null });
         return;
     }
 }

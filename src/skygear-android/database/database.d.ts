@@ -1,4 +1,4 @@
-import { iSkyRecord } from "../../skygear-sdk.common";
+import { ISkyRecord } from "../../skygear-sdk.common";
 export declare class Database {
     private readonly PUBLIC_DATABASE_NAME;
     private readonly PRIVATE_DATABASE_NAME;
@@ -11,14 +11,14 @@ export declare class Database {
     private createMap(record);
     getPublicDatabase(): any;
     getPrivateDatabase(): any;
-    savePrivateRecord(record: iSkyRecord): Promise<{}>;
-    savePublicRecord(record: iSkyRecord): Promise<{}>;
+    savePrivateRecord(record: ISkyRecord): Promise<{}>;
+    savePublicRecord(record: ISkyRecord): Promise<{}>;
     getCollection(recordType: string): Promise<{}>;
     getUsers(): Promise<{}>;
     getPrivateRecord(recordType: string, id: string): Promise<{}>;
     getPublicRecord(recordType: string, id: string): Promise<{}>;
-    updatePrivateRecord(record: iSkyRecord, id: string): Promise<{}>;
-    updatePublicRecord(record: iSkyRecord, id: string): Promise<{}>;
+    updatePrivateRecord(record: ISkyRecord, id: string): Promise<{}>;
+    updatePublicRecord(record: ISkyRecord, id: string): Promise<{}>;
     deletePrivateRecord(recordType: string, id: string): Promise<{}>;
     deletePublicRecord(recordType: string, id: string): Promise<{}>;
 }

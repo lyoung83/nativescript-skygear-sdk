@@ -1,10 +1,10 @@
-export declare var GetCallback: any;
-export declare var LambdaCallback: any;
-export declare var SaveCallback: any;
-export declare var Serializer: any;
-export declare var GetMessagesCallback: any;
-export declare var ConversationSubscriptionCallback: any;
-export declare var UserSubscriptionCallback: any;
+export declare const GetCallback: any;
+export declare const LambdaCallback: any;
+export declare const SaveCallback: any;
+export declare const Serializer: any;
+export declare const GetMessagesCallback: any;
+export declare const ConversationSubscriptionCallback: any;
+export declare const UserSubscriptionCallback: any;
 export declare class SKYSaveCallback extends SaveCallback {
     worker: Worker;
     onSuccess(object: any): void;

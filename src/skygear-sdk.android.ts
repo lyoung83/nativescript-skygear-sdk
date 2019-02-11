@@ -1,10 +1,10 @@
-import { Common, iSkyConfig } from './skygear-sdk.common';
-import { android } from 'tns-core-modules/application'
+import { Common, ISkyConfig } from './skygear-sdk.common';
+import { android } from 'tns-core-modules/application';
 import { Auth, Database, PubSub, Chat, Cloud } from './skygear-android';
 
 declare var io: any;
 const Container = io.skygear.skygear.Container;
-const Configuration = io.skygear.skygear.Configuration
+const Configuration = io.skygear.skygear.Configuration;
 
 
 export class SkygearSdk extends Common {
@@ -12,11 +12,11 @@ export class SkygearSdk extends Common {
     private skygear;
     public db: Database;
     public auth: Auth;
-    public pubsub: PubSub
+    public pubsub: PubSub;
     public chat: Chat;
     public cloud: Cloud;
 
-    constructor({address, apiKey}: iSkyConfig) {
+    constructor({address, apiKey}: ISkyConfig) {
         super();
 
         this.config = new Configuration.Builder()

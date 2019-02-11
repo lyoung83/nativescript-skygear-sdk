@@ -1,6 +1,6 @@
-import { iSkyRecord } from "nativescript-skygear-sdk";
+import { ISkyRecord } from "nativescript-skygear-sdk";
 
-export interface iTodo extends iSkyRecord {
+export interface iTodo extends ISkyRecord {
     readonly recordType: "todo";
     task: string;
     completed: boolean;
