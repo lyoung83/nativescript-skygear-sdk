@@ -135,7 +135,7 @@ export class TodoView extends Observable {
       todo.completed = !todo.completed;
       let result: any = await this.skygear.db.updatePrivateRecord(todo, todo._id);
       let newTodo = this.todos
-        .filter(todo => todo._id !== result._id);
+        .filter(todo => todo._id !== result._id)
         .concat(result);
 
       this.set("todos", newTodo);
