@@ -30,7 +30,7 @@ matrix:
       jdk: oraclejdk8
       before_install: nvm install stable
       script:
-        - cd src && npm run tsc && cd ../demo && && npm i && tns build android
+        - cd src && npm run tsc && cd ../demo && npm i && tns build android
     - os: osx
       env:
         - BuildiOS="12"
@@ -72,7 +72,7 @@ android:
     - android-28
     - android-26
     - extra-android-m2repository
-    - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-26
 
 before_install:
     - sudo pip install --upgrade pip
