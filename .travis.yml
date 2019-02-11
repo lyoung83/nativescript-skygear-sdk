@@ -73,5 +73,6 @@ before_install:
 
 install:
     - echo no | npm install -g nativescript
+    - echo no | npm install -g typescript
     - tns usage-reporting disable
     - tns error-reporting disable
