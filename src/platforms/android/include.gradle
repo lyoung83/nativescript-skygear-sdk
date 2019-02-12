@@ -2,8 +2,8 @@
 
 android {
     defaultConfig {
-        minSdkVersion 24
-    targetSdkVersion 26
+        minSdkVersion 26
+    targetSdkVersion 27
     }
 
 }
@@ -12,7 +12,6 @@ dependencies {
 
     // Describe plugin native Android dependencies like
 	// compile "groupName:pluginName:ver"
-    // EXAMPLE: compile "com.facebook.fresco:fresco:0.9.0+"
     compile 'io.skygear:skygear:1.6.4'
     compile 'io.skygear.plugins:chat:1.6.3'
 }
