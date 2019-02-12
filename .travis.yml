@@ -48,7 +48,7 @@ matrix:
       sudo: required
       jdk: oraclejdk8
       before_script:
-        - echo no | android create avd --force -n test -t google_apis-26 -b x86_64
+        - echo no | android create avd --force -n test -t android-26 -b x86_64 --tag google_apis
         - emulator -avd test -no-audio -no-window &
         - android-wait-for-emulator
       before_install:
