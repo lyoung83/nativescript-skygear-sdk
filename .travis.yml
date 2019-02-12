@@ -28,7 +28,7 @@ matrix:
         - BuildAndroid="28"
       os: linux
       jdk: oraclejdk8
-      before_install: nvm install stable
+      before_install: nvm install 10
       script:
         - cd src && npm i && npm run tsc && cd ../demo && tns build android
     - os: osx
@@ -48,7 +48,7 @@ matrix:
       sudo: required
       jdk: oraclejdk8
       before_script:
-        - echo no | android create avd --force -n test -t android-24 -b armeabi-7a
+        - echo no | android create avd --force -n test -t android-26 -b x86_64
         - emulator -avd test -no-audio -no-window &
         - android-wait-for-emulator
       before_install:
@@ -69,9 +69,9 @@ android:
     - platform-tools
     - build-tools-28.0.3
     - android-28
-    - android-24
+    - android-26
     - extra-android-m2repository
-    - sys-img-armeabi-7a-android-24
+    - sys-img-x86_64-android-26
 
 before_install:
     - sudo pip install --upgrade pip
