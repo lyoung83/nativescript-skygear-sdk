@@ -1,9 +1,9 @@
 <TabView androidTabsPosition="bottom" selectedIndex="0" selectedIndexChanged="onSelectedIndexChanged">
     <TabViewItem title="Auth">
-        <Frame id="entry-frame" defaultPage="main/main-page"></Frame>
+        <Frame id="entry-page" defaultPage="main/main-page"></Frame>
     </TabViewItem>
     <TabViewItem title="Todos">
-        <Frame id="todos" defaultPage="todo/todos" />
+        <Frame id="todos" defaultPage="todo/todos-page" />
     </TabViewItem>
     <TabViewItem title="PubSub">
         <Frame id="search" defaultPage="pubsub/pubsub-page" />
