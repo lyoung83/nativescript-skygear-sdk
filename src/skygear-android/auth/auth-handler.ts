@@ -5,7 +5,7 @@ export const spawnWorker = () => {
     } else {
         return new Worker('../result-worker.js');
     }
-}
+};
 
 declare const io: any;
 const SKYErrorSerializer = io.skygear.skygear.ErrorSerializer;
@@ -13,7 +13,7 @@ const SKYErrorSerializer = io.skygear.skygear.ErrorSerializer;
 export const SKYAuthHandler = io.skygear.skygear.AuthResponseHandler;
 export const SKYLogoutHandler = io.skygear.skygear.LogoutResponseHandler;
 
-export var authWorker = spawnWorker();
+export const authWorker = spawnWorker();
 
 
 export class LoginHandler extends SKYAuthHandler {

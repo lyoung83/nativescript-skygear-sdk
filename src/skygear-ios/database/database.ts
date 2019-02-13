@@ -115,7 +115,7 @@ export class Database {
      */
     async savePrivateRecord(record: ISkyRecord) {
         try {
-            let worker = await spawnWorker()
+            let worker = await spawnWorker();
             let skyRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record);
             await this.private.saveRecordCompletion(skyRecord, this.returnRecord(worker));
             return this.response(worker);
@@ -132,7 +132,7 @@ export class Database {
      */
     async savePublicRecord(record: ISkyRecord) {
         try {
-            let worker = spawnWorker()
+            let worker = spawnWorker();
             let skyRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record);
             await this.public.saveRecordCompletion(skyRecord, this.returnRecord(worker));
 
@@ -149,7 +149,7 @@ export class Database {
      */
     async getCollection(recordType: string) {
         try {
-            let worker = spawnWorker()
+            let worker = spawnWorker();
             let query = await SKYQuery.queryWithRecordTypePredicate(recordType, null);
             await this.private.performQueryCompletionHandler(query, this.returnCollection(worker));
 
@@ -186,7 +186,7 @@ export class Database {
      */
     async getPrivateRecord(recordType: string, id: string) {
         try {
-            let worker = spawnWorker()
+            let worker = spawnWorker();
             let recordId = SKYRecordID.recordIDWithRecordTypeName(recordType, this.sliceId(id));
             await this.private.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord(worker));
 
@@ -202,7 +202,7 @@ export class Database {
      */
     async getPublicRecord(recordType: string, id: string) {
         try {
-            let worker = spawnWorker()
+            let worker = spawnWorker();
             let recordId = SKYRecordID.recordIDWithRecordTypeName(recordType, this.sliceId(id));
             await this.public.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord(worker));
 

@@ -8,7 +8,7 @@ export const spawnWorker = () => {
     }
 };
 
-var authWorker = spawnWorker();
+const authWorker = spawnWorker();
 
 /**
  * Class for Authentication against a Skygear backend.

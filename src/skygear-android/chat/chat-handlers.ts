@@ -5,7 +5,7 @@ export const spawnWorker = () => {
     } else {
         return new Worker('../result-worker.js');
     }
-}
+};
 
 declare const io: any, java: any;
 

@@ -33,8 +33,8 @@ export class PubSub {
     async subscribe(channelName: string) {
         try {
             let worker = spawnWorker();
-            await this.channel.subscribeToHandler(channelName, this.handler(worker))
-            return worker
+            await this.channel.subscribeToHandler(channelName, this.handler(worker));
+            return worker;
         } catch ({ message: error }) {
             return { error };
         }

@@ -5,7 +5,7 @@ export const spawnWorker = () => {
     } else {
         return new Worker('../result-worker.js');
     }
-}
+};
 
 declare var io: any;
 export const SKYRecordSaveResponseHandler = io.skygear.skygear.RecordSaveResponseHandler;

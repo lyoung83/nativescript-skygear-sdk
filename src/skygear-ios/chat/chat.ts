@@ -248,8 +248,8 @@ export class Chat {
      */
     async subscribeToConversations() {
         try {
-             await this.unsubscribeFromConversations()
-            const RecordChangeEvent = "SKYChatDidReceiveRecordChangeNotification"
+             await this.unsubscribeFromConversations();
+            const RecordChangeEvent = "SKYChatDidReceiveRecordChangeNotification";
             let worker = spawnWorker();
             await this.chat
                 .subscribeToUserChannelWithCompletion((error: NSError) => {

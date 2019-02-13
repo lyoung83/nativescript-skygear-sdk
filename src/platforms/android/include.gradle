@@ -1,6 +1,20 @@
 /* Include.gradle configuration: http://docs.nativescript.org/plugins/plugins#includegradle-specification */
+allprojects {
+    repositories {
+        google()
+
+        // If you're using a version of Gradle lower than 4.1, you must
+        // instead use:
+        //
+        maven {
+            url 'https://maven.google.com'
+        }
+    }
+}
+
 
 android {
+    compileSdkVersion 28
     defaultConfig {
         minSdkVersion 24
     targetSdkVersion 28
@@ -12,6 +26,12 @@ dependencies {
 
     // Describe plugin native Android dependencies like
 	// compile "groupName:pluginName:ver"
+    compile 'com.android.support:support-v4:+'
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:appcompat-v7:27.0.1'
+    compile 'com.android.support:support-vector-drawable:+'
     compile 'io.skygear:skygear:1.6.4'
     compile 'io.skygear.plugins:chat:1.6.3'
 }
+
+
