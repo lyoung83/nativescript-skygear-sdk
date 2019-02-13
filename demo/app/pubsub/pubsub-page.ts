@@ -7,13 +7,13 @@ import { getRootView } from 'tns-core-modules/application/application';
 
 
 export function navigatingTo(args: EventData) {
-	let page = <Page>args.object;
-	page.bindingContext = new PubsubViewModel(skygearSdk);
+  let page = <Page>args.object;
+  page.bindingContext = new PubsubViewModel(skygearSdk);
 }
 
-export function showSideDrawer(args: EventData){
-    const drawer: RadSideDrawer = <RadSideDrawer>getRootView()
-    drawer.showDrawer();
+export function showSideDrawer(args: EventData) {
+  const drawer: RadSideDrawer = <RadSideDrawer>getRootView();
+  drawer.showDrawer();
   let page = <Page>args.object;
   page.bindingContext = new PubsubViewModel(skygearSdk);
 }

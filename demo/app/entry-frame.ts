@@ -6,8 +6,8 @@ import { getRootView } from "tns-core-modules/application/application";
 import { getFrameById } from "tns-core-modules/ui/frame/frame";
 
 
-export function onLoad(){
-    alert("Welcome! \n Click 'OK' to get started")
+export function onLoad() {
+    alert("Welcome! \n Click 'OK' to get started");
 }
 
 export function navigateToMain(args: EventData) {
@@ -19,7 +19,7 @@ export function navigateToMain(args: EventData) {
         moduleName: "main/main-page",
         clearHistory: true
     });
-    sideDrawer.closeDrawer()
+    sideDrawer.closeDrawer();
 }
 
 export function navigateToTodos(args: EventData) {
@@ -31,7 +31,7 @@ export function navigateToTodos(args: EventData) {
         moduleName: "todo/todos",
         clearHistory: true
     });
-    sideDrawer.closeDrawer()
+    sideDrawer.closeDrawer();
 }
 
 export function navigateToPubsub(args: EventData) {
@@ -43,7 +43,7 @@ export function navigateToPubsub(args: EventData) {
         moduleName: "pubsub/pubsub-page",
         clearHistory: true
     });
-    sideDrawer.closeDrawer()
+    sideDrawer.closeDrawer();
 }
 
 export function navigateToConversations(args: EventData) {
@@ -55,5 +55,5 @@ export function navigateToConversations(args: EventData) {
         moduleName: "conversation/conversation-page",
         clearHistory: true
     });
-    sideDrawer.closeDrawer()
+    sideDrawer.closeDrawer();
 }

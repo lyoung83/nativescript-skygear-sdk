@@ -34,13 +34,13 @@ export class Messages extends Observable {
             });
     }
 
-    async sendText(args){
+    async sendText(args) {
         try {
             const field: TextField = <TextField>args.object;
             await this.skygear.chat.sendMessage(field.text, this.conversation);
-            field.text = ""
+            field.text = "";
         } catch ({message: error}) {
-            alert(error)
+            alert(error);
         }
     }
 

@@ -11,7 +11,7 @@ export function pageLoaded(args: observable.EventData) {
     page.bindingContext = new TodoView(skygearSdk);
 }
 
-export function showSideDrawer(args: observable.EventData){
-    const drawer: RadSideDrawer = <RadSideDrawer>getRootView()
+export function showSideDrawer(args: observable.EventData) {
+    const drawer: RadSideDrawer = <RadSideDrawer>getRootView();
     drawer.showDrawer();
 }

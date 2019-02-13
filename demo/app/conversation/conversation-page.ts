@@ -27,7 +27,7 @@ export function goToItem(args: ItemEventData): void {
     });
 }
 
-export function showSideDrawer(args: EventData){
-    const drawer: RadSideDrawer = <RadSideDrawer>getRootView()
+export function showSideDrawer(args: EventData) {
+    const drawer: RadSideDrawer = <RadSideDrawer>getRootView();
     drawer.showDrawer();
 }
