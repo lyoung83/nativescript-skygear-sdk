@@ -6,9 +6,9 @@ import { getRootView } from "tns-core-modules/application/application";
 import { getFrameById } from "tns-core-modules/ui/frame/frame";
 
 
-export function onLoad() {
+export function onLoad(){
     alert("Welcome! \n Click 'OK' to get started");
-}
+};
 
 export function navigateToMain(args: EventData) {
     // const button: Button = <Button>args.object;
@@ -20,7 +20,7 @@ export function navigateToMain(args: EventData) {
         clearHistory: true
     });
     sideDrawer.closeDrawer();
-}
+};
 
 export function navigateToTodos(args: EventData) {
     // const button: Button = <Button>args.object;
@@ -28,11 +28,11 @@ export function navigateToTodos(args: EventData) {
     const sideDrawer: RadSideDrawer = <RadSideDrawer>getRootView();
     const featuredFrame = getFrameById("root");
     featuredFrame.navigate({
-        moduleName: "todo/todos",
+        moduleName: "todo/todos-page",
         clearHistory: true
     });
     sideDrawer.closeDrawer();
-}
+};
 
 export function navigateToPubsub(args: EventData) {
     // const button: Button = <Button>args.object;
@@ -44,7 +44,7 @@ export function navigateToPubsub(args: EventData) {
         clearHistory: true
     });
     sideDrawer.closeDrawer();
-}
+};
 
 export function navigateToConversations(args: EventData) {
     // const button: Button = <Button>args.object;
@@ -56,4 +56,4 @@ export function navigateToConversations(args: EventData) {
         clearHistory: true
     });
     sideDrawer.closeDrawer();
-}
+};
