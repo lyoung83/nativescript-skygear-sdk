@@ -4,7 +4,7 @@ export { PubSub } from './pubsub/pubsub';
 export { Chat } from "./chat/chat";
 export { Cloud } from "./cloud/cloud";
 
-declare var SKYRecordSerializer: any;
+declare const SKYRecordSerializer: any;
 export const serializeResult = (result) => {
     if (result === null) {
         return result;
@@ -13,9 +13,9 @@ export const serializeResult = (result) => {
     let ref = _serializer.dictionaryWithRecord(result);
     let final = NSJSONSerialization.dataWithJSONObjectOptionsError(ref, NSJSONWritingOptions.PrettyPrinted);
     let newResult = NSString.alloc().initWithDataEncoding(final, NSUTF8StringEncoding);
-    let json = JSON.parse(newResult.toString())
+    let json = JSON.parse(newResult.toString());
     return json;
-}
+};
 
 export const serializeError = (error) => {
     if (error === null) {
@@ -25,7 +25,6 @@ export const serializeError = (error) => {
         let _id = error.userInfo.valueForKey("conversation_id");
         return { _id };
     }
-    console.log(error)
     return error.userInfo.valueForKey("NSLocalizedDescription");
 
 };

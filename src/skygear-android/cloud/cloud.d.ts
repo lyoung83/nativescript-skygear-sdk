@@ -1,5 +1,5 @@
 export declare const spawnWorker: () => any;
-export declare var LambdaCallback: any;
+export declare const LambdaCallback: any;
 export declare class SKYLambdaCallback extends LambdaCallback {
     worker: Worker;
     onLambdaSuccess(object: any): void;

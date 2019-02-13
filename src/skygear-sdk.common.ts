@@ -2,9 +2,9 @@ import { Observable } from 'tns-core-modules/data/observable';
 /**
  * interface for initalizing the skygear plugin.
  */
-export interface iSkyConfig {
+export interface ISkyConfig {
   address: string;
-  apiKey: string
+  apiKey: string;
 }
 
 /**
@@ -12,7 +12,7 @@ export interface iSkyConfig {
  * meant to be implemented by class or extended by an interface.
  * @example class NewClass implements iSkyRecord {}
  */
-export interface iSkyRecord {
+export interface ISkyRecord {
   _id?: any;
   _created_at?: any;
   _updated_at?: any;
@@ -22,7 +22,7 @@ export interface iSkyRecord {
   recordType: string;
 }
 
-const APP_VERSION = "0.0.1"
+const APP_VERSION = "0.0.1";
 
 export class Common extends Observable {
 

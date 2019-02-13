@@ -5,8 +5,8 @@ import { prompt, action, ActionOptions } from "tns-core-modules/ui/dialogs/dialo
 import { ListView, ItemEventData } from "tns-core-modules/ui/list-view/list-view";
 
 export class Messages extends Observable {
-    messages
-    channel
+    messages;
+    channel;
 
     constructor(private conversation: any, private skygear: SkygearSdk) {
         super();
@@ -22,7 +22,7 @@ export class Messages extends Observable {
             cancelButtonText: "Cancel",
             defaultText: "hello",
             inputType: "text" // text, password, or email
-        }
+        };
 
         prompt(promptOptions)
             .then(async result => {
@@ -50,28 +50,28 @@ export class Messages extends Observable {
             let messages: any[] = await this.skygear.chat.fetchMessages(this.conversation._id);
             this.set("messages", messages.reverse());
         } catch {
-            alert("Unable to fetch messages")
+            alert("Unable to fetch messages");
         }
     }
 
     async subscribeToMessages() {
         try {
             let subscription: any = await this.skygear.chat.subscribeToConversations();
-            if (subscription.error) { throw new Error };
-            this.set("channel", subscription)
+            if (subscription.error) { throw new Error; }
+            this.set("channel", subscription);
             subscription.onmessage = ({ data: { result } }) => {
                 const {event_type, record_type, record} = result;
                 if (event_type === "create" && record_type === "message" && record.conversation['$id'] === this.conversation._id) {
                     let messages = this.messages.concat(record);
                     this.set("messages", messages);
                 }
-            }
+            };
         } catch {
-            alert("unable to subscribe to conversation")
+            alert("unable to subscribe to conversation");
         }
     }
 
-    endSubscription(){
+    endSubscription() {
         this.channel.terminate();
     }
 }

@@ -1,7 +1,7 @@
-import { Common, iSkyConfig } from './skygear-sdk.common';
+import { Common, ISkyConfig } from './skygear-sdk.common';
 import { Auth, Database, PubSub, Chat, Cloud } from './skygear-ios';
 
-export interface iSkyRecord {
+export interface ISkyRecord {
     _id?: any;
     _created_at?: any;
     _updated_at?: any;
@@ -18,6 +18,6 @@ export interface iSkyRecord {
       pubsub: PubSub;
       chat: Chat;
       cloud: Cloud;
-      constructor({address, apiKey}: iSkyConfig);
+      constructor({address, apiKey}: ISkyConfig);
       getContainer(): any;
   }

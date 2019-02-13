@@ -14,4 +14,6 @@ export function navigatingTo(args: EventData) {
 export function showSideDrawer(args: EventData){
     const drawer: RadSideDrawer = <RadSideDrawer>getRootView()
     drawer.showDrawer();
+  let page = <Page>args.object;
+  page.bindingContext = new PubsubViewModel(skygearSdk);
 }

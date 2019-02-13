@@ -8,19 +8,19 @@ export const spawnWorker = () => {
 };
 
 export class PubSub {
-    private channel
+    private channel;
     constructor(skygear) {
         this.channel = skygear.pubsub;
     }
 
-    private handler(worker: Worker){
+    private handler(worker: Worker) {
         return function (info: any) {
-        let payload = NSJSONSerialization.dataWithJSONObjectOptionsError(info, NSJSONWritingOptions.PrettyPrinted);
-        let newResult = NSString.alloc().initWithDataEncoding(payload, NSUTF8StringEncoding);
-        let result = JSON.parse(newResult.toString())
-        worker.postMessage({ result, error: null });
+            let payload = NSJSONSerialization.dataWithJSONObjectOptionsError(info, NSJSONWritingOptions.PrettyPrinted);
+            let newResult = NSString.alloc().initWithDataEncoding(payload, NSUTF8StringEncoding);
+            let result = JSON.parse(newResult.toString());
+            worker.postMessage({ result, error: null });
+        };
     }
-}
     /**
      * subscribes to a Pubsub channel on the skygear backend and sends back a nativescript worker.
      * @param channelName string representing the name of the channel to subscribe to.
@@ -30,13 +30,13 @@ export class PubSub {
      * channel.onmessage = (response) => console.log(response.data.result);
      * channel.onerror = () => channel.terminate()
      */
-   async subscribe(channelName: string) {
+    async subscribe(channelName: string) {
         try {
             let worker = spawnWorker();
             await this.channel.subscribeToHandler(channelName, this.handler(worker))
             return worker
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
     }
 
@@ -49,7 +49,7 @@ export class PubSub {
         try {
             return await this.channel.publishMessageToChannel({ payload }, channelName);
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
     }
 }

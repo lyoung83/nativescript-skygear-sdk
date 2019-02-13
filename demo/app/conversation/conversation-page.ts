@@ -6,14 +6,14 @@ import { ItemEventData, ListView } from "tns-core-modules/ui/list-view/list-view
 import { RadSideDrawer } from "nativescript-ui-sidedrawer";
 import { getRootView } from "tns-core-modules/application/application";
 
-export function pageLoaded(args: EventData){
+export function pageLoaded(args: EventData) {
     let page: Page = <Page>args.object;
-    page.bindingContext = new ConversationPage(skygearSdk)
+    page.bindingContext = new ConversationPage(skygearSdk);
 }
 
 export function goToItem(args: ItemEventData): void {
     const tappedItem = args.view.bindingContext;
-    let list = <ListView>args.object
+    let list = <ListView>args.object;
     let page = list.page;
     page.frame.navigate({
         moduleName: "messages/messages-page",

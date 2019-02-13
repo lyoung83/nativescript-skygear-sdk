@@ -9,11 +9,11 @@ export const spawnWorker = () => {
 
 declare var io: any, java: any;
 
-var SKYPubsubContainer = io.skygear.skygear.PubsubContainer;
-export var SKYPubsubHandler = io.skygear.skygear.PubsubHandler;
-var JSONObject = org.json.JSONObject;
-var Map = java.util.HashMap;
-var Bool = java.util.Boolean;
+const SKYPubsubContainer = io.skygear.skygear.PubsubContainer;
+export const SKYPubsubHandler = io.skygear.skygear.PubsubHandler;
+const JSONObject = org.json.JSONObject;
+const Map = java.util.HashMap;
+const Bool = java.util.Boolean;
 
 export class PubSubResponse extends SKYPubsubHandler {
     worker: Worker = spawnWorker();
@@ -32,33 +32,33 @@ export class PubSub {
     }
 
     private createMap(payloadObject) {
-        var map = new Map();
+        let map = new Map();
         for (const key in payloadObject) {
             if (payloadObject.hasOwnProperty(key)) {
 
-                var isArray = Array.isArray(payloadObject[key]);
+                let isArray = Array.isArray(payloadObject[key]);
 
                 if (typeof payloadObject[key] === "boolean") {
-                    map.put(key, Bool.valueOf(payloadObject[key]))
-                } else if (isArray){
+                    map.put(key, Bool.valueOf(payloadObject[key]));
+                } else if (isArray) {
                     map.put(key, this.createArray(payloadObject[key]));
-                }else {
-                    map.put(key, payloadObject[key])
+                } else {
+                    map.put(key, payloadObject[key]);
                 }
             }
         }
-        return map
+        return map;
     }
 
-    private createArray(array){
-        var newArray;
+    private createArray(array) {
+        let newArray;
 
         switch (typeof array[0]) {
             case "number":
                 newArray = Array.create("int", array.length);
                 break;
             case "string":
-                newArray = Array.create(java.lang.String, array.length)
+                newArray = Array.create(java.lang.String, array.length);
                 break;
             default:
                 break;
@@ -67,15 +67,15 @@ export class PubSub {
         array.forEach((item, index) => {
             newArray[index] = item;
         });
-        return newArray
+        return newArray;
     }
 
     private createPayload(payload) {
-        var map = new Map()
+        let map = new Map();
         if (typeof payload === "object" && !Array.isArray(payload)) {
             map.put("payload", this.createMap(payload));
         } else if (typeof payload === "object" && Array.isArray(payload)) {
-            map.put("payload", this.createArray(payload))
+            map.put("payload", this.createArray(payload));
         } else if (typeof payload === "boolean") {
             map.put("payload", Bool.valueOf(payload));
         } else {
@@ -87,20 +87,20 @@ export class PubSub {
 
     async subscribe(channelName: string) {
         try {
-            let pubSubChannel = new PubSubResponse()
-            await this.channel.subscribe(channelName, pubSubChannel)
+            let pubSubChannel = new PubSubResponse();
+            await this.channel.subscribe(channelName, pubSubChannel);
             return pubSubChannel.worker;
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
     }
 
     async publish(channelName: string, payload: any) {
         try {
-            let payloadMap = this.createPayload(payload)
+            let payloadMap = this.createPayload(payload);
             return await this.channel.publish(channelName, new JSONObject(payloadMap));
         } catch ({ message: error }) {
-            return { error }
+            return { error };
         }
     }
 }
