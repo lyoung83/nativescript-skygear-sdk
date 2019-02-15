@@ -30,7 +30,8 @@
         "tns-core-modules": "~5.0.2",
         "reflect-metadata": "~0.1.10",
         "rxjs": "~6.3.0",
-        "zone.js": "~0.8.18"
+        "zone.js": "~0.8.18",
+        "nativescript-skygear-sdk": "file:../src"
     },
     "devDependencies": {
         "@nativescript/schematics": "~0.4.0",
