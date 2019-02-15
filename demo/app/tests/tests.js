@@ -12,7 +12,7 @@ describe("version function", function() {
     });
 
     it("returns a string", function() {
-        expect(skygearSdk.version()).toEqual("0.0.1");
+        expect(skygearSdk.version()).toEqual("0.0.4");
     });
 
     it("container exists", function() {
