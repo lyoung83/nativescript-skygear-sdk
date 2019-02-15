@@ -48,7 +48,7 @@ matrix:
       sudo: required
       jdk: oraclejdk8
       before_script:
-        - echo no | android create avd --force -n test -t android-25 -b armeabi-v7a --tag google_apis
+        - echo no | android create avd --force -n test -t android-24 -b armeabi-v7a --tag google_apis
         - emulator -avd test -no-audio -no-window &
         - android-wait-for-emulator
       before_install:
@@ -70,10 +70,10 @@ android:
     - build-tools-28.0.3
     - extra-android-support
     - android-28
-    - android-25
+    - android-24
     - extra-android-m2repository
     - extra-google-m2repository
-    - sys-img-armeabi-v7a-google_apis-25
+    - sys-img-armeabi-v7a-google_apis-24_r24
 
 before_install:
     - sudo pip install --upgrade pip
