@@ -1,4 +1,3 @@
-export declare const spawnWorker: () => any;
 export declare class Cloud {
     private skygear;
     constructor(skygear: any);

@@ -1,28 +1,26 @@
-export const spawnWorker = () => {
-    if (global["TNS_WEBPACK"]) {
-        const WebpackWorker = require("nativescript-worker-loader!../result-worker.js");
-        return new WebpackWorker();
-    } else {
-        return new Worker('../result-worker.js');
-    }
-};
-
 declare var io: any, java: any;
 const Bool = java.lang.Boolean;
 const Map = java.util.HashMap;
 export const LambdaCallback = io.skygear.skygear.LambdaResponseHandler;
-export class SKYLambdaCallback extends LambdaCallback {
-    worker: Worker = spawnWorker();
+export class SKYLambdaCallback extends (LambdaCallback as {new(): any}) {
+    private resolve;
+    private reject;
+
+    constructor(res, rej) {
+        super();
+        this.resolve = res;
+        this.reject = rej;
+    }
 
     onLambdaSuccess(object) {
         let result = JSON.parse(object);
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result)
         return;
     }
 
     onLambdaFail(err) {
         let error = err.getMessage();
-        this.worker.postMessage({ result: null, error });
+        this.reject(error);
         return;
     }
 }
@@ -48,19 +46,10 @@ export class Cloud {
     }
 
     callLambda(name, args = {}) {
-        let response = new SKYLambdaCallback();
-        let map = this.createMap(args);
-        this.skygear.callLambdaFunction(name, map, response);
-
         return new Promise<any>((resolve, reject) => {
-            response.worker.onmessage = (msg) => {
-                if (msg.data.res === "success") {
-                    resolve(msg.data.result);
-                } else {
-                    reject(msg.data.result);
-                }
-                response.worker.terminate();
-            };
+            let response = new SKYLambdaCallback(resolve, reject);
+            let map = this.createMap(args);
+            this.skygear.callLambdaFunction(name, map, response);
         });
     }
 }

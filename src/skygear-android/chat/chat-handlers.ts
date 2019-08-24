@@ -32,107 +32,137 @@ const createJson = (chatArray) => {
     }
 };
 
-export class SKYSaveCallback extends SaveCallback {
-    worker: Worker = spawnWorker();
+export class SKYSaveCallback extends (SaveCallback as {new()}) {
+    resolve
+    reject
+
+    constructor(res, rej) {
+        super()
+        this.resolve = res;
+        this.reject = rej;
+    }
 
     onSuccess(object) {
         let result = JSON.parse(object.toJson());
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result);
         return;
     }
 
     onFail(error) {
         try {
             let _id = error.getConversationId();
-            this.worker.postMessage({ result: { _id }, error: null });
+            this.resolve({_id});
             return;
         } catch {
             let err = error.getMessage();
-            this.worker.postMessage({ result: null, error: err });
+            this.reject(err);
             return;
         }
     }
 }
 
-export class SKYGetCallback extends GetCallback {
-    worker: Worker = spawnWorker();
+export class SKYGetCallback extends (GetCallback as {new()}) {
+    resolve
+    reject
+    constructor(res, rej) {
+        super();
+        this.resolve = res;
+        this.reject = rej;
+    }
 
     onSuccess(object) {
         let result = JSON.parse(object.toJson());
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result);
         return;
     }
 
     onGetCachedResult(object) {
         let result = JSON.parse(object.toJson());
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result);
         return;
     }
 
     onFail(err) {
         let error = err.getMessage();
         console.log(error);
-        this.worker.postMessage({ result: null, error });
+        this.reject(error)
         return;
     }
 }
 
-export class SKYGetCollectionCallback extends GetCallback {
-    worker: Worker = spawnWorker();
+export class SKYGetCollectionCallback extends (GetCallback as {new()}) {
+    resolve
+    reject
+    constructor(res, rej) {
+        super();
+        this.resolve = res;
+        this.reject = rej;
+    }
     onSuccess(object) {
         let result = createJson(object);
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result);
         return;
     }
 
     onGetCachedResult(object) {
         let result = createJson(object);
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result);
         return;
     }
 
     onFail(err) {
         let error = err.getMessage();
         console.log(error);
-        this.worker.postMessage({ result: null, error });
+        this.reject(error);
         return;
     }
 }
 
-export class SKYLambdaCallback extends LambdaCallback {
-    worker: Worker = spawnWorker();
-
+export class SKYLambdaCallback extends (LambdaCallback as {new()}) {
+    resolve
+    reject
+    constructor(res, rej) {
+        super();
+        this.resolve = res;
+        this.reject = rej;
+    }
     onLambdaSuccess(object) {
         let result = JSON.parse(object.toJson());
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result);
         return;
     }
 
     onLambdaFail(err) {
         let error = err.getMessage();
-        this.worker.postMessage({ result: null, error });
+        this.reject(error);
         return;
     }
 }
 
 export class SKYGetMessagesCallback extends GetMessagesCallback {
-    worker: Worker = spawnWorker();
+    resolve
+    reject
+    constructor(res, rej) {
+        super();
+        this.resolve = res;
+        this.reject = rej;
+    }
     onSuccess(object) {
         let result = createJson(object);
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result);
         return;
     }
 
     onGetCachedResult(object) {
         let result = createJson(object);
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result);
         return;
     }
 
     onFail(err) {
         let error = err.getMessage();
         console.log(error);
-        this.worker.postMessage({ result: null, error });
+        this.reject(error);
         return;
     }
 }

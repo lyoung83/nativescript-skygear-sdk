@@ -13,13 +13,13 @@ export declare class Chat {
     private createRecord(recordType, data);
     private createEventData(event);
     private sliceId(id);
-    createDirectConversation(userId: string, title?: string): Promise<any>;
-    createGroupConversation(userIds: string[], title?: string): Promise<any>;
-    sendMessage(message: string, conversationRecord: any): Promise<any>;
-    fetchCurrentConversations(): Promise<any>;
-    fetchConversation(conversationId: string): Promise<any>;
-    fetchMessages(conversationId: string): Promise<any>;
-    leaveConversation(conversationId: string): Promise<any>;
+    createDirectConversation(userId: string, title?: string): Promise<{}>;
+    createGroupConversation(userIds: string[], title?: string): Promise<{}>;
+    sendMessage(message: string, conversationRecord: any): Promise<{}>;
+    fetchCurrentConversations(): Promise<{}>;
+    fetchConversation(conversationId: string): Promise<{}>;
+    fetchMessages(conversationId: string): Promise<{}>;
+    leaveConversation(conversationId: string): Promise<{}>;
     subscribeToConversations(): Promise<any>;
     unsubscribeFromConversations(): Promise<"ok" | {
         error: any;

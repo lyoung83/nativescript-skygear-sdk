@@ -1,29 +1,24 @@
-export const spawnWorker = () => {
-    if (global["TNS_WEBPACK"]) {
-        const WebpackWorker = require("nativescript-worker-loader!../result-worker.js");
-        return new WebpackWorker();
-    } else {
-        return new Worker('../result-worker.js');
-    }
-};
-
 declare var io: any;
 export const SKYRecordSaveResponseHandler = io.skygear.skygear.RecordSaveResponseHandler;
 export const SKYRecordQueryResponseHandler = io.skygear.skygear.RecordQueryResponseHandler;
 export const SKYRecordDeleteResponseHandler = io.skygear.skygear.RecordDeleteResponseHandler;
-// export const databaseWorker = spawnWorker();
 
 const SKYErrorSerializer = io.skygear.skygear.ErrorSerializer;
 
-export class RecordSaveResponse extends SKYRecordSaveResponseHandler {
-    worker: Worker = spawnWorker();
-
+export class RecordSaveResponse extends (SKYRecordSaveResponseHandler as {new()}) {
+    resolve: any;
+    reject: any;
+    constructor(res, rej) {
+        super();
+        this.resolve = res;
+        this.reject = rej
+    }
     onSaveSuccess(result) {
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result);
         return result;
     }
     onSaveFail(error) {
-        this.worker.postMessage({ result: null, error});
+        this.reject(error);
         return error;
     }
 
@@ -39,16 +34,21 @@ export class RecordSaveResponse extends SKYRecordSaveResponseHandler {
     }
 }
 
-export class QueryResponse extends SKYRecordQueryResponseHandler {
-    worker: Worker = spawnWorker();
-
+export class QueryResponse extends (SKYRecordQueryResponseHandler as {new()}) {
+    resolve: any;
+    reject: any;
+    constructor(res, rej) {
+        super();
+        this.resolve = res;
+        this.reject = rej
+    }
     onQuerySuccess(result) {
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result)
         return result;
     }
 
     onQueryError(error) {
-        this.worker.postMessage({ result: null, error });
+       this.reject(error)
         return error;
     }
 
@@ -65,16 +65,22 @@ export class QueryResponse extends SKYRecordQueryResponseHandler {
 }
 
 
-export class RecordFetchResponse extends SKYRecordQueryResponseHandler {
-    worker: Worker = spawnWorker();
+export class RecordFetchResponse extends (SKYRecordQueryResponseHandler as {new()}) {
+    resolve: any;
+    reject: any;
+    constructor(res, rej) {
+        super();
+        this.resolve = res;
+        this.reject = rej
+    }
 
     onQuerySuccess(result) {
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result);
         return result;
     }
 
     onQueryError(error) {
-        this.worker.postMessage({ result: null, error });
+        this.reject(error);
         return error;
     }
 
@@ -90,16 +96,22 @@ export class RecordFetchResponse extends SKYRecordQueryResponseHandler {
     }
 }
 
-export class RecordDeleteResponse extends SKYRecordDeleteResponseHandler {
-    worker: Worker = spawnWorker();
+export class RecordDeleteResponse extends (SKYRecordDeleteResponseHandler as {new()}) {
+    resolve: any;
+    reject: any;
+    constructor(res, rej) {
+        super();
+        this.resolve = res;
+        this.reject = rej
+    }
 
     onDeleteSuccess(result) {
-        this.worker.postMessage({ result, error: null });
+        this.resolve(result);
         return result;
     }
 
     onDeleteError(error) {
-        this.worker.postMessage({ result: null, error });
+        this.reject(error);
         return error;
     }
 

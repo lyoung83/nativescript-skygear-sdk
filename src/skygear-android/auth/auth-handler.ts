@@ -1,32 +1,28 @@
-export const spawnWorker = () => {
-    if (global["TNS_WEBPACK"]) {
-        const WebpackWorker = require("nativescript-worker-loader!../result-worker.js");
-        return new WebpackWorker();
-    } else {
-        return new Worker('../result-worker.js');
-    }
-};
-
 declare const io: any;
 const SKYErrorSerializer = io.skygear.skygear.ErrorSerializer;
 
 export const SKYAuthHandler = io.skygear.skygear.AuthResponseHandler;
 export const SKYLogoutHandler = io.skygear.skygear.LogoutResponseHandler;
 
-export const authWorker = spawnWorker();
 
-
-export class LoginHandler extends SKYAuthHandler {
+export class LoginHandler extends (SKYAuthHandler as {new()}) {
+    resolve
+    reject
+    constructor(res, rej) {
+        super()
+        this.resolve = res;
+        this.reject = rej;
+    }
 
     protected onAuthSuccess(result) {
-        authWorker.postMessage({ result, error: null });
+        this.resolve(result)
         return result;
     }
 
     protected onAuthFail(err) {
         let json = SKYErrorSerializer.serialize(err);
         let error = JSON.parse(json);
-        authWorker.postMessage({ result: null, error: error.message });
+        this.reject(error)
         return error;
     }
 
@@ -47,15 +43,21 @@ export class LoginHandler extends SKYAuthHandler {
 
 }
 
-export class LogoutHandler extends SKYLogoutHandler {
-
+export class LogoutHandler extends (SKYLogoutHandler as {new()}) {
+    resolve
+    reject
+    constructor(res, rej) {
+        super()
+        this.resolve = res;
+        this.reject = rej;
+    }
     protected onLogoutSuccess(result) {
-        authWorker.postMessage({ result, error: null });
+        this.resolve(result);
         return;
     }
 
     protected onLogoutFail(error) {
-        authWorker.postMessage({ result: null, error });
+        this.reject(error);
         return;
     }
 

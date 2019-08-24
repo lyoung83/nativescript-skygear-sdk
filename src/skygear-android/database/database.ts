@@ -4,8 +4,6 @@ import { ISkyRecord } from "../../skygear-sdk.common";
 const Record = io.skygear.skygear.Record;
 const Query = io.skygear.skygear.Query;
 const SKYDatabase = io.skygear.skygear.Database;
-const Serializer = io.skygear.skygear.RecordSerializer;
-const JSONObject = org.json.JSONObject;
 const Map = java.util.HashMap;
 const Bool = java.lang.Boolean;
 const reservedKeys = ["_id", "_type", "_recordType", "_recordID", "_created_at", "_updated_at", "_ownerID", "_created_by", "_updated_by", "_access", "_deleted", "_transient"];
@@ -17,20 +15,6 @@ export class Database {
     private public;
     constructor(skygear) {
         this.prepareDB(skygear);
-    }
-
-    private response(worker: Worker) {
-        return new Promise((resolve, reject) => {
-            worker.onmessage = (msg) => {
-                if (msg.data.res === "success") {
-                    resolve(msg.data.result);
-                    worker.terminate();
-                } else {
-                    reject(new Error("Operation Failed"));
-                    worker.terminate();
-                }
-            };
-        });
     }
 
     private sliceId(id: string) {
@@ -76,9 +60,10 @@ export class Database {
         try {
             let map = await this.createMap(record);
             let recordToSave = new Record(record.recordType, map);
-            let databaseHandler = new RecordSaveResponse();
-            await this.private.save(recordToSave, databaseHandler);
-            return this.response(databaseHandler.worker);
+            return await new Promise((resolve, reject) => {
+            let databaseHandler = new RecordSaveResponse(resolve, reject);
+            this.private.save(recordToSave, databaseHandler);
+            })
         } catch ({ message: error }) {
             return { error };
         }
@@ -88,9 +73,10 @@ export class Database {
         try {
             let map = await this.createMap(record);
             let recordToSave = new Record(record.recordType, map);
-            let databaseHandler = new RecordSaveResponse();
-            await this.public.save(recordToSave, databaseHandler);
-            return this.response(databaseHandler.worker);
+            return await new Promise((resolve, reject) => {
+                let databaseHandler = new RecordSaveResponse(resolve, reject);
+                this.public.save(recordToSave, databaseHandler);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -98,10 +84,11 @@ export class Database {
 
     async getCollection(recordType: string) {
         try {
-            let query = new Query(recordType);
-            let databaseHandler = new QueryResponse();
-            await this.private.query(query, databaseHandler);
-            return this.response(databaseHandler.worker);
+            return await new Promise((resolve, reject) => {
+                let query = new Query(recordType);
+                let databaseHandler = new QueryResponse(resolve, reject);
+                this.private.query(query, databaseHandler)
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -109,21 +96,23 @@ export class Database {
 
     async getUsers() {
         try {
-            let query = new Query("user");
-            let databaseHandler = new QueryResponse();
-            await this.public.query(query, databaseHandler);
-            return this.response(databaseHandler.worker);
+            return await new Promise((resolve, reject) => {
+                let query = new Query("user");
+                let databaseHandler = new QueryResponse(resolve, reject);
+                this.public.query(query, databaseHandler);
+            });
         } catch ({ message: error }) {
             return { error };
         }
     }
     async getPrivateRecord(recordType: string, id: string) {
         try {
-            let query = new Query(recordType)
-                .equalTo("_id", this.sliceId(id));
-            let databaseHandler = new RecordFetchResponse();
-            await this.private.query(query, databaseHandler);
-            return this.response(databaseHandler.worker);
+            return await new Promise((resolve, reject) => {
+                let query = new Query(recordType)
+                    .equalTo("_id", this.sliceId(id));
+                let databaseHandler = new RecordFetchResponse(resolve, reject);
+                this.private.query(query, databaseHandler);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -132,11 +121,12 @@ export class Database {
 
     async getPublicRecord(recordType: string, id: string) {
         try {
-            let query = new Query(recordType)
-                .equalTo("_id", this.sliceId(id));
-            let databaseHandler = new RecordFetchResponse();
-            await this.public.query(query, databaseHandler);
-            return this.response(databaseHandler.worker);
+            return await new Promise((resolve, reject) => {
+                let query = new Query(recordType)
+                    .equalTo("_id", this.sliceId(id));
+                let databaseHandler = new RecordFetchResponse(resolve, reject);
+                this.public.query(query, databaseHandler);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -144,11 +134,12 @@ export class Database {
 
     async updatePrivateRecord(record: ISkyRecord, id: string) {
         try {
-            let map = this.createMap(record);
-            let updatedRecord = new Record(record.recordType, this.sliceId(id), map);
-            let databaseHandler = new RecordSaveResponse();
-            await this.private.save(updatedRecord, databaseHandler);
-            return this.response(databaseHandler.worker);
+            return await new Promise((resolve, reject) => {
+                let map = this.createMap(record);
+                let updatedRecord = new Record(record.recordType, this.sliceId(id), map);
+                let databaseHandler = new RecordSaveResponse(resolve, reject);
+                this.private.save(updatedRecord, databaseHandler);
+            });
 
         } catch ({ message: error }) {
             return { error };
@@ -157,12 +148,12 @@ export class Database {
 
     async updatePublicRecord(record: ISkyRecord, id: string) {
         try {
-            let map = this.createMap(record);
-            let updatedRecord = new Record(record.recordType, this.sliceId(id), map);
-            let databaseHandler = new RecordSaveResponse();
-            await this.public.save(updatedRecord, databaseHandler);
-            return this.response(databaseHandler.worker);
-
+            return await new Promise((resolve, reject) => {
+                let map = this.createMap(record);
+                let updatedRecord = new Record(record.recordType, this.sliceId(id), map);
+                let databaseHandler = new RecordSaveResponse(resolve, reject);
+                this.public.save(updatedRecord, databaseHandler);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -170,11 +161,11 @@ export class Database {
 
     async deletePrivateRecord(recordType: string, id: string) {
         try {
-            let recordToDelete = new Record(recordType, this.sliceId(id), null);
-            let databaseHandler = new RecordDeleteResponse();
-            await this.private.delete(recordToDelete, databaseHandler);
-            return this.response(databaseHandler.worker);
-
+            return await new Promise((resolve, reject) => {
+                let recordToDelete = new Record(recordType, this.sliceId(id), null);
+                let databaseHandler = new RecordDeleteResponse(resolve, reject);
+                this.private.delete(recordToDelete, databaseHandler);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -182,10 +173,11 @@ export class Database {
 
     async deletePublicRecord(recordType: string, id: string) {
         try {
+            return await new Promise((resolve, reject) => {
             let recordToDelete = new Record(recordType, this.sliceId(id), null);
-            let databaseHandler = new RecordDeleteResponse();
-            await this.private.delete(recordToDelete, databaseHandler);
-            return this.response(databaseHandler.worker);
+            let databaseHandler = new RecordDeleteResponse(resolve, reject);
+            this.private.delete(recordToDelete, databaseHandler);
+            });
 
         } catch ({ message: error }) {
             return { error };

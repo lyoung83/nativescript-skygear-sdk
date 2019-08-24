@@ -90,9 +90,10 @@ export class Chat {
 
     async createDirectConversation(userId: string, title = "") {
         try {
-            let saveCallback = new SKYSaveCallback();
-            await this.chat.createDirectConversation(userId, title, null, saveCallback);
-            return this.response(saveCallback.worker);
+            return await new Promise((resolve, reject) => {
+                let saveCallback = new SKYSaveCallback(resolve, reject);
+                this.chat.createDirectConversation(userId, title, null, saveCallback);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -100,11 +101,12 @@ export class Chat {
 
     async createGroupConversation(userIds: string[], title = "") {
         try {
-            let saveCallback = new SKYSaveCallback();
+            return await new Promise((resolve, reject) => {
+            let saveCallback = new SKYSaveCallback(resolve, reject);
             let idArray = userIds.map(id => this.sliceId(id));
             let ids = ios.collections.jsArrayToNSArray(idArray);
-            await this.chat.createConversation(ids, title, null, saveCallback);
-            return this.response(saveCallback.worker);
+            this.chat.createConversation(ids, title, null, saveCallback);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -112,13 +114,14 @@ export class Chat {
 
     async sendMessage(message: string, conversationRecord) {
         try {
-            let json = this.createJson(conversationRecord);
-            let record = Serializer.deserialize(json); // not particularly thrilled about doing this.
-            let javaRecord = Serializer.serialize(record); // seems really weird but trying to serialize the json into a record produces an error
-            let cModel = Conversation.fromJson(javaRecord); // because of the way the access field is parsed. but I can de-serialize it and then serialize
-            let saveCallback = new SKYSaveCallback(); // and everyone is happy ¯\_(ツ)_/¯
-            await this.chat.sendMessage(cModel, message, null, null, saveCallback);
-            return this.response(saveCallback.worker);
+            return await new Promise((resolve, reject) => {
+                let json = this.createJson(conversationRecord);
+                let record = Serializer.deserialize(json); // not particularly thrilled about doing this.
+                let javaRecord = Serializer.serialize(record); // seems really weird but trying to serialize the json into a record produces an error
+                let cModel = Conversation.fromJson(javaRecord); // because of the way the access field is parsed. but I can de-serialize it and then serialize
+                let saveCallback = new SKYSaveCallback(resolve, reject); // and everyone is happy ¯\_(ツ)_/¯
+                this.chat.sendMessage(cModel, message, null, null, saveCallback);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -126,9 +129,10 @@ export class Chat {
 
     async fetchCurrentConversations() {
         try {
-            let successCallback = new SKYGetCollectionCallback();
-            await this.chat.getConversations(successCallback);
-            return this.response(successCallback.worker);
+            return await new Promise((resolve, reject) => {
+                let successCallback = new SKYGetCollectionCallback(resolve, reject);
+                this.chat.getConversations(successCallback);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -136,16 +140,18 @@ export class Chat {
 
     async fetchMessages(conversationId: string) {
         try {
-            let getCallback = new SKYGetCallback();
-            await this.chat.getConversation(this.sliceId(conversationId), getCallback);
-            let conversation = await this.response(getCallback.worker);
-            let json = this.createJson(conversation);
-            let record = Serializer.deserialize(json);
-            let javaRecord = Serializer.serialize(record);
-            let cModel = Conversation.fromJson(javaRecord);
-            let messagesCallback = new SKYGetMessagesCallback();
-            await this.chat.getMessages(cModel, 50, null, null, messagesCallback);
-            return this.response(messagesCallback.worker);
+            return await new Promise(async (resolve, reject) => {
+                let conversation = await new Promise((res, rej) => {
+                    let getCallback = new SKYGetCallback(res, rej);
+                    this.chat.getConversation(this.sliceId(conversationId), getCallback);
+                })
+                let json = this.createJson(conversation);
+                let record = Serializer.deserialize(json);
+                let javaRecord = Serializer.serialize(record);
+                let cModel = Conversation.fromJson(javaRecord);
+                let messagesCallback = new SKYGetMessagesCallback(resolve, reject);
+                this.chat.getMessages(cModel, 50, null, null, messagesCallback);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -153,12 +159,14 @@ export class Chat {
 
     async leaveConversation(conversationId: string) {
         try {
-            let conversationCallback = new SKYGetCallback();
-            await this.chat.getConversation(this.sliceId(conversationId), conversationCallback);
-            let conversation = await this.response(conversationCallback.worker);
-            let saveCallback = new SKYLambdaCallback();
-            await this.chat.leaveConversation(conversation, saveCallback);
-            return this.response(saveCallback.worker);
+            return await new Promise(async (resolve, reject) => {
+            let conversation = await new Promise((res, rej) => {
+                let conversationCallback = new SKYGetCallback(res, rej);
+                this.chat.getConversation(this.sliceId(conversationId), conversationCallback);
+            });
+            let saveCallback = new SKYLambdaCallback(resolve, reject);
+            this.chat.leaveConversation(conversation, saveCallback);
+            });
         } catch ({ message: error }) {
             return { error };
         }

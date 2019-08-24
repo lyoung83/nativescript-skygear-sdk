@@ -1,7 +1,10 @@
 export declare const spawnWorker: () => any;
 export declare const LambdaCallback: any;
-export declare class SKYLambdaCallback extends LambdaCallback {
-    worker: Worker;
+declare const SKYLambdaCallback_base: new () => any;
+export declare class SKYLambdaCallback extends SKYLambdaCallback_base {
+    private resolve;
+    private reject;
+    constructor(res: any, rej: any);
     onLambdaSuccess(object: any): void;
     onLambdaFail(err: any): void;
 }
