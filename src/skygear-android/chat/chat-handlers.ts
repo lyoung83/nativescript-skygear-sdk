@@ -139,7 +139,7 @@ export class SKYLambdaCallback extends (LambdaCallback as {new()}) {
     }
 }
 
-export class SKYGetMessagesCallback extends GetMessagesCallback {
+export class SKYGetMessagesCallback extends (GetMessagesCallback as {new()}) {
     resolve;
     reject;
     constructor(res, rej) {

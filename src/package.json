@@ -1,6 +1,6 @@
 {
     "name": "nativescript-skygear-sdk",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "This Plugin allows you to interact with Skygear.io or a skygear-server backend.",
     "main": "skygear-sdk",
     "typings": "index.d.ts",
