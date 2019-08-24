@@ -17,13 +17,13 @@ export class Auth {
                 return;
             }
             res(serializeResult(user));
-        }
+        };
     }
 
     async getWhoAmI() {
         try {
 
-            return await new Promise<any>((res, rej) =>{
+            return await new Promise((res, rej) => {
                 this.auth.getWhoAmIWithCompletionHandler(this.promiseHandler(res, rej));
             });
         } catch {

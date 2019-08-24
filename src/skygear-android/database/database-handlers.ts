@@ -11,7 +11,7 @@ export class RecordSaveResponse extends (SKYRecordSaveResponseHandler as {new()}
     constructor(res, rej) {
         super();
         this.resolve = res;
-        this.reject = rej
+        this.reject = rej;
     }
     onSaveSuccess(result) {
         this.resolve(result);
@@ -40,15 +40,15 @@ export class QueryResponse extends (SKYRecordQueryResponseHandler as {new()}) {
     constructor(res, rej) {
         super();
         this.resolve = res;
-        this.reject = rej
+        this.reject = rej;
     }
     onQuerySuccess(result) {
-        this.resolve(result)
+        this.resolve(result);
         return result;
     }
 
     onQueryError(error) {
-       this.reject(error)
+       this.reject(error);
         return error;
     }
 
@@ -71,7 +71,7 @@ export class RecordFetchResponse extends (SKYRecordQueryResponseHandler as {new(
     constructor(res, rej) {
         super();
         this.resolve = res;
-        this.reject = rej
+        this.reject = rej;
     }
 
     onQuerySuccess(result) {
@@ -102,7 +102,7 @@ export class RecordDeleteResponse extends (SKYRecordDeleteResponseHandler as {ne
     constructor(res, rej) {
         super();
         this.resolve = res;
-        this.reject = rej
+        this.reject = rej;
     }
 
     onDeleteSuccess(result) {

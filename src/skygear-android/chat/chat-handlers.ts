@@ -33,11 +33,11 @@ const createJson = (chatArray) => {
 };
 
 export class SKYSaveCallback extends (SaveCallback as {new()}) {
-    resolve
-    reject
+    resolve;
+    reject;
 
     constructor(res, rej) {
-        super()
+        super();
         this.resolve = res;
         this.reject = rej;
     }
@@ -62,8 +62,8 @@ export class SKYSaveCallback extends (SaveCallback as {new()}) {
 }
 
 export class SKYGetCallback extends (GetCallback as {new()}) {
-    resolve
-    reject
+    resolve;
+    reject;
     constructor(res, rej) {
         super();
         this.resolve = res;
@@ -85,14 +85,14 @@ export class SKYGetCallback extends (GetCallback as {new()}) {
     onFail(err) {
         let error = err.getMessage();
         console.log(error);
-        this.reject(error)
+        this.reject(error);
         return;
     }
 }
 
 export class SKYGetCollectionCallback extends (GetCallback as {new()}) {
-    resolve
-    reject
+    resolve;
+    reject;
     constructor(res, rej) {
         super();
         this.resolve = res;
@@ -119,8 +119,8 @@ export class SKYGetCollectionCallback extends (GetCallback as {new()}) {
 }
 
 export class SKYLambdaCallback extends (LambdaCallback as {new()}) {
-    resolve
-    reject
+    resolve;
+    reject;
     constructor(res, rej) {
         super();
         this.resolve = res;
@@ -140,8 +140,8 @@ export class SKYLambdaCallback extends (LambdaCallback as {new()}) {
 }
 
 export class SKYGetMessagesCallback extends GetMessagesCallback {
-    resolve
-    reject
+    resolve;
+    reject;
     constructor(res, rej) {
         super();
         this.resolve = res;

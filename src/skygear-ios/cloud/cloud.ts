@@ -32,7 +32,7 @@ export class Cloud {
                 }
                 if (err) {
                     error = err.userInfo.valueForKey("NSLocalizedDescription");
-                    reject(error)
+                    reject(error);
                     return;
                 }
                 resolve(result);

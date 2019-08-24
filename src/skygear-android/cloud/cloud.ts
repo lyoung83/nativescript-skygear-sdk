@@ -14,7 +14,7 @@ export class SKYLambdaCallback extends (LambdaCallback as {new(): any}) {
 
     onLambdaSuccess(object) {
         let result = JSON.parse(object);
-        this.resolve(result)
+        this.resolve(result);
         return;
     }
 

@@ -6,23 +6,23 @@ export const SKYLogoutHandler = io.skygear.skygear.LogoutResponseHandler;
 
 
 export class LoginHandler extends (SKYAuthHandler as {new()}) {
-    resolve
-    reject
+    resolve;
+    reject;
     constructor(res, rej) {
-        super()
+        super();
         this.resolve = res;
         this.reject = rej;
     }
 
     protected onAuthSuccess(result) {
-        this.resolve(result)
+        this.resolve(result);
         return result;
     }
 
     protected onAuthFail(err) {
         let json = SKYErrorSerializer.serialize(err);
         let error = JSON.parse(json);
-        this.reject(error)
+        this.reject(error);
         return error;
     }
 
@@ -44,10 +44,10 @@ export class LoginHandler extends (SKYAuthHandler as {new()}) {
 }
 
 export class LogoutHandler extends (SKYLogoutHandler as {new()}) {
-    resolve
-    reject
+    resolve;
+    reject;
     constructor(res, rej) {
-        super()
+        super();
         this.resolve = res;
         this.reject = rej;
     }

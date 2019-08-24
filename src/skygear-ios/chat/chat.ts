@@ -59,7 +59,7 @@ export class Chat {
                 rej(error);
                 return error;
             }
-            res(result)
+            res(result);
             return result;
         } catch ({ message: error }) {
             return { error };
@@ -72,7 +72,7 @@ export class Chat {
             let result: any[] = newArray.map(item => serializeResult(item.record));
             let error = err ? serializeError(err) : null;
             if (err) {
-                rej(error)
+                rej(error);
                 return true;
             }
             res(result);
@@ -87,8 +87,8 @@ export class Chat {
             let result: any = record;
             let error = serializeError(err);
             if (err) {
-                rej(error)
-                return true
+                rej(error);
+                return true;
             }
             res(result);
             return true;

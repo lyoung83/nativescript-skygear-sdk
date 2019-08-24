@@ -19,7 +19,7 @@ export class Database {
             let result: any = serializeResult(record);
             let error = serializeError(err);
             if (err) {
-                rej(error)
+                rej(error);
                 return true;
             }
             res(result);
@@ -36,11 +36,11 @@ export class Database {
             let result: any[] = newArray.map(item => serializeResult(item));
             let error = serializeError(err);
             if (err) {
-                rej(error)
+                rej(error);
                 return true;
             }
             res(result);
-            return true
+            return true;
         } catch ({ message: error }) {
             rej(error);
             return { error };

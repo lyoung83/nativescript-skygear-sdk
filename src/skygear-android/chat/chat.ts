@@ -144,7 +144,7 @@ export class Chat {
                 let conversation = await new Promise((res, rej) => {
                     let getCallback = new SKYGetCallback(res, rej);
                     this.chat.getConversation(this.sliceId(conversationId), getCallback);
-                })
+                });
                 let json = this.createJson(conversation);
                 let record = Serializer.deserialize(json);
                 let javaRecord = Serializer.serialize(record);

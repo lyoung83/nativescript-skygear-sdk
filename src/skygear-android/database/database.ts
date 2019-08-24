@@ -63,7 +63,7 @@ export class Database {
             return await new Promise((resolve, reject) => {
             let databaseHandler = new RecordSaveResponse(resolve, reject);
             this.private.save(recordToSave, databaseHandler);
-            })
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -87,7 +87,7 @@ export class Database {
             return await new Promise((resolve, reject) => {
                 let query = new Query(recordType);
                 let databaseHandler = new QueryResponse(resolve, reject);
-                this.private.query(query, databaseHandler)
+                this.private.query(query, databaseHandler);
             });
         } catch ({ message: error }) {
             return { error };
