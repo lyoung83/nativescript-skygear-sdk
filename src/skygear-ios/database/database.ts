@@ -3,24 +3,6 @@ import * as utils from "tns-core-modules/utils/utils";
 import { serializeResult, serializeError } from "../";
 import { ISkyRecord } from "../../skygear-sdk.common";
 
-export const spawnWorker = () => {
-    if (global["TNS_WEBPACK"]) {
-        const WebpackWorker = require("nativescript-worker-loader!../result-worker.js");
-        return new WebpackWorker();
-    } else {
-        return new Worker('../result-worker.js');
-    }
-};
-
-interface IWorkerResponse<T> {
-    data: {
-        res: string,
-        result: T
-    };
-}
-
-
-
 /**
  * Class and methods for interacting with the Skygear database instanced as part of the skygear container.
  */
@@ -32,41 +14,35 @@ export class Database {
         this.private = skygear.privateCloudDatabase;
     }
 
-    private response = (worker: Worker) => new Promise<any>((resolve, reject) => {
-        worker.onmessage = (msg: IWorkerResponse<any>) => {
-            if (msg.data.res === "success") {
-                resolve(msg.data.result);
-                worker.terminate();
-            } else {
-                reject(new Error("Operation Failed"));
-                worker.terminate();
-            }
-        };
-
-        worker.onerror = error => {
-            console.log(error);
-            reject({ error });
-            worker.terminate();
-        };
-    })
-
-    private returnRecord = (worker: Worker) => (record, err) => {
+    private returnRecord = (res, rej) => (record, err) => {
         try {
             let result: any = serializeResult(record);
             let error = serializeError(err);
-            return worker.postMessage({ result, error });
+            if (err) {
+                rej(error)
+                return true;
+            }
+            res(result);
+            return true;
         } catch ({ message: error }) {
+            rej(error);
             return { error };
         }
     }
 
-    private returnCollection = (worker: Worker) => (records, err) => {
+    private returnCollection = (res, rej) => (records, err) => {
         try {
             let newArray = utils.ios.collections.nsArrayToJSArray(records);
             let result: any[] = newArray.map(item => serializeResult(item));
             let error = serializeError(err);
-            return worker.postMessage({ result, error });
+            if (err) {
+                rej(error)
+                return true;
+            }
+            res(result);
+            return true
         } catch ({ message: error }) {
+            rej(error);
             return { error };
         }
 
@@ -115,10 +91,10 @@ export class Database {
      */
     async savePrivateRecord(record: ISkyRecord) {
         try {
-            let worker = await spawnWorker();
             let skyRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record);
-            await this.private.saveRecordCompletion(skyRecord, this.returnRecord(worker));
-            return this.response(worker);
+            return await new Promise<any>((resolve, reject) => {
+             this.private.saveRecordCompletion(skyRecord, this.returnRecord(resolve, reject));
+             });
         } catch ({ message: error }) {
             return { error };
         }
@@ -132,11 +108,10 @@ export class Database {
      */
     async savePublicRecord(record: ISkyRecord) {
         try {
-            let worker = spawnWorker();
             let skyRecord = await SKYRecord.recordWithRecordTypeNameData(record.recordType, null, record);
-            await this.public.saveRecordCompletion(skyRecord, this.returnRecord(worker));
-
-            return this.response(worker);
+            return await new Promise<any>((resolve, reject) => {
+             this.public.saveRecordCompletion(skyRecord, this.returnRecord(resolve, reject));
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -149,11 +124,10 @@ export class Database {
      */
     async getCollection(recordType: string) {
         try {
-            let worker = spawnWorker();
             let query = await SKYQuery.queryWithRecordTypePredicate(recordType, null);
-            await this.private.performQueryCompletionHandler(query, this.returnCollection(worker));
-
-            return this.response(worker);
+            return await new Promise<any>((resolve, reject) => {
+                this.private.performQueryCompletionHandler(query, this.returnCollection(resolve, reject));
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -166,11 +140,10 @@ export class Database {
      */
     async getUsers() {
         try {
-            let worker = spawnWorker();
             let query = await SKYQuery.queryWithRecordTypePredicate("user", null);
-            await this.public.performQueryCompletionHandler(query, this.returnCollection(worker));
-
-            return this.response(worker);
+            return await new Promise<any>((resolve, reject) => {
+                this.public.performQueryCompletionHandler(query, this.returnCollection(resolve, reject));
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -186,11 +159,10 @@ export class Database {
      */
     async getPrivateRecord(recordType: string, id: string) {
         try {
-            let worker = spawnWorker();
             let recordId = SKYRecordID.recordIDWithRecordTypeName(recordType, this.sliceId(id));
-            await this.private.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord(worker));
-
-            return this.response(worker);
+            return await new Promise<any>((resolve, reject) => {
+             this.private.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord(resolve, reject));
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -202,11 +174,10 @@ export class Database {
      */
     async getPublicRecord(recordType: string, id: string) {
         try {
-            let worker = spawnWorker();
             let recordId = SKYRecordID.recordIDWithRecordTypeName(recordType, this.sliceId(id));
-            await this.public.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord(worker));
-
-            return this.response(worker);
+            return await new Promise<any>((resolve, reject) => {
+             this.public.fetchRecordWithIDCompletionHandler(recordId, this.returnRecord(resolve, reject));
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -220,11 +191,11 @@ export class Database {
      */
     async updatePrivateRecord(record: ISkyRecord, id: string) {
         try {
-            let worker = await spawnWorker();
             let dictionary = await this.createDictionary(record);
             let modifiedRecord = SKYRecord.recordWithRecordTypeNameData(record.recordType, this.sliceId(id), dictionary);
-            await this.private.saveRecordCompletion(modifiedRecord, this.returnRecord(worker));
-            return this.response(worker);
+            return await new Promise<any>((resolve, reject) => {
+                this.private.saveRecordCompletion(modifiedRecord, this.returnRecord(resolve, reject));
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -237,11 +208,11 @@ export class Database {
      */
     async updatePublicRecord(record: ISkyRecord, id: string) {
         try {
-            let worker = await spawnWorker();
             let dictionary = await this.createDictionary(record);
             let modifiedRecord = SKYRecord.recordWithRecordTypeNameData(record.recordType, this.sliceId(id), dictionary);
-            await this.public.saveRecordCompletion(modifiedRecord, this.returnRecord(worker));
-            return this.response(worker);
+            return await new Promise<any>((resolve, reject) => {
+                this.public.saveRecordCompletion(modifiedRecord, this.returnRecord(resolve, reject));
+            });
         } catch ({ message: error }) {
             return { error };
         }

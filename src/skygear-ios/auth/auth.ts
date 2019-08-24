@@ -1,14 +1,4 @@
 import { serializeResult, serializeError } from "../";
-export const spawnWorker = () => {
-    if (global["TNS_WEBPACK"]) {
-        const WebpackWorker = require("nativescript-worker-loader!../result-worker.js");
-        return new WebpackWorker();
-    } else {
-        return new Worker('../result-worker.js');
-    }
-};
-
-const authWorker = spawnWorker();
 
 /**
  * Class for Authentication against a Skygear backend.
@@ -19,28 +9,23 @@ export class Auth {
         this.auth = skygear.auth;
     }
 
-    private response = () => {
-        return new Promise<any>((resolve, reject) => {
-            authWorker.onmessage = ({ data: { result } }) => {
-                try {
-                    resolve(result);
-                } catch {
-                    reject(new Error("Failed data fetch"));
-                }
-            };
-        });
-    }
 
-    private userHandler = (user, err) => {
-        let result = serializeResult(user);
-        let error = serializeError(err);
-        return authWorker.postMessage({ result, error });
+    private promiseHandler(res, rej) {
+        return (user, err) => {
+            if (err) {
+                rej(serializeError(err));
+                return;
+            }
+            res(serializeResult(user));
+        }
     }
 
     async getWhoAmI() {
         try {
-            await this.auth.getWhoAmIWithCompletionHandler(this.userHandler);
-            return this.response();
+
+            return await new Promise<any>((res, rej) =>{
+                this.auth.getWhoAmIWithCompletionHandler(this.promiseHandler(res, rej));
+            });
         } catch {
             return { error: "Not currently logged in." };
         }
@@ -53,9 +38,10 @@ export class Auth {
      */
     async signupWithUsername(username: string, password: string) {
         try {
-            await this.auth
-                .signupWithUsernamePasswordCompletionHandler(username, password, this.userHandler);
-            return this.response();
+            return await new Promise((res, rej) => {
+                this.auth
+                .signupWithUsernamePasswordCompletionHandler(username, password, this.promiseHandler(res, rej));
+            });
         } catch {
             return { error: "duplicate record or missing information" };
         }
@@ -69,9 +55,10 @@ export class Auth {
      */
     async signupWithEmail(email: string, password: string) {
         try {
-            await this.auth
-                .signupWithEmailPasswordCompletionHandler(email, password, this.userHandler);
-            return this.response();
+            return await new Promise((res, rej) => {
+             this.auth
+                .signupWithEmailPasswordCompletionHandler(email, password, this.promiseHandler(res, rej));
+            });
         } catch {
             return { error: "duplicate record or missing information" };
         }
@@ -84,9 +71,10 @@ export class Auth {
      */
     async loginWithUsername(username: string, password: string) {
         try {
-            await this.auth
-                .loginWithUsernamePasswordCompletionHandler(username, password, this.userHandler);
-            return this.response();
+            return await new Promise((res, rej) => {
+             this.auth
+                .loginWithUsernamePasswordCompletionHandler(username, password, this.promiseHandler(res, rej));
+            });
         } catch ({ message }) {
             return { error: message };
         }
@@ -100,10 +88,10 @@ export class Auth {
      */
     async loginWithEmail(email: string, password: string) {
         try {
-            await this.auth
-                .loginWithEmailPasswordCompletionHandler(email, password, this.userHandler);
-
-            return this.response();
+            return await new Promise((res, rej) => {
+             this.auth
+                .loginWithEmailPasswordCompletionHandler(email, password, this.promiseHandler(res, rej));
+            });
 
         } catch {
             return { error: "unable to login" };
@@ -115,8 +103,9 @@ export class Auth {
      */
     async logout() {
         try {
-            await this.auth.logoutWithCompletionHandler(this.userHandler);
-            return this.response();
+            return await new Promise((res, rej) => {
+             this.auth.logoutWithCompletionHandler(this.promiseHandler(res, rej));
+            });
 
         } catch {
             return { error: "Logout Failed" };

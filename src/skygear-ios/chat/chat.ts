@@ -50,33 +50,48 @@ export class Chat {
         return record.record;
     }
 
-    private completionHandler = (worker: Worker) => (record, err: NSError) => {
+    private completionHandler = (res, rej) => (record, err: NSError) => {
         try {
             let r = this.recordHandler(record);
             let result: any = serializeResult(r.record);
             let error = serializeError(err);
-            return worker.postMessage({ result, error });
+            if (err) {
+                rej(error);
+                return error;
+            }
+            res(result)
+            return result;
         } catch ({ message: error }) {
             return { error };
         }
     }
 
-    private arrayCompletionHandler = (worker: Worker) => (records, err) => {
+    private arrayCompletionHandler = (res, rej) => (records, err) => {
         try {
             let newArray: any[] = ios.collections.nsArrayToJSArray(records);
             let result: any[] = newArray.map(item => serializeResult(item.record));
             let error = err ? serializeError(err) : null;
-            return worker.postMessage({ result, error });
+            if (err) {
+                rej(error)
+                return true;
+            }
+            res(result);
+            return true;
         } catch ({ message: error }) {
             return { error };
         }
     }
 
-    private recordCompletionHandler = (worker: Worker) => (record, err) => {
+    private recordCompletionHandler = (res, rej) => (record, err) => {
         try {
             let result: any = record;
             let error = serializeError(err);
-            return worker.postMessage({ result, error });
+            if (err) {
+                rej(error)
+                return true
+            }
+            res(result);
+            return true;
         } catch ({ message: error }) {
             return { error };
         }
@@ -132,12 +147,12 @@ export class Chat {
      */
     async createDirectConversation(userId: string, title: string = "") {
         try {
-            let worker = spawnWorker();
-            await this.chat
+            return await new Promise((res, rej) => {
+                this.chat
                 .createDirectConversationWithParticipantIDTitleMetadataCompletion(
-                    this.sliceId(userId), title, null, this.completionHandler(worker)
+                    this.sliceId(userId), title, null, this.completionHandler(res, rej)
                 );
-            return this.response(worker);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -150,12 +165,12 @@ export class Chat {
      */
     async createGroupConversation(userIds: string[], title: string = "") {
         try {
-            let worker = spawnWorker();
-            await this.chat
+            return await new Promise((res, rej) => {
+             this.chat
                 .createDirectConversationWithParticipantIDsTitleMetadataCompletion(
-                    userIds, title, null, this.completionHandler(worker)
+                    userIds, title, null, this.completionHandler(res, rej)
                 );
-            return this.response(worker);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -172,11 +187,11 @@ export class Chat {
             let messageRecord = SKYRecord.recordWithRecordTypeName(this.messageRecordType, null);
             messageRecord.setValueForKey(message, "body");
             let skyMessage = SKYMessage.recordWithRecord(messageRecord);
-            let worker = spawnWorker();
-            await this.chat.addMessageToConversationCompletion(
-                skyMessage, conversation, this.completionHandler(worker)
+            return await new Promise((res, rej) => {
+             this.chat.addMessageToConversationCompletion(
+                skyMessage, conversation, this.completionHandler(res, rej)
             );
-            return this.response(worker);
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -186,9 +201,9 @@ export class Chat {
      */
     async fetchCurrentConversations() {
         try {
-            let worker = await spawnWorker();
-            await this.chat.fetchConversationsWithCompletion(this.arrayCompletionHandler(worker));
-            return this.response(worker);
+            return await new Promise((res, rej) => {
+             this.chat.fetchConversationsWithCompletion(this.arrayCompletionHandler(res, rej));
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -200,9 +215,9 @@ export class Chat {
      */
     async fetchConversation(conversationId: string) {
         try {
-            let worker = await spawnWorker();
-            await this.chat.fetchConversationWithConversationIDFetchLastMessageCompletion(this.sliceId(conversationId), false, this.recordCompletionHandler(worker));
-            return this.response(worker);
+            return await new Promise((res, rej) => {
+             this.chat.fetchConversationWithConversationIDFetchLastMessageCompletion(this.sliceId(conversationId), false, this.recordCompletionHandler(res, rej));
+            });
         } catch ({ message: error }) {
             return { error };
         }
@@ -214,12 +229,12 @@ export class Chat {
      */
     async fetchMessages(conversationId: string) {
         try {
-            let messageWorker = spawnWorker();
-            await this.chat
+            return await new Promise((res, rej) => {
+             this.chat
                 .fetchMessagesWithConversationIDLimitBeforeTimeOrderCompletion(
-                    this.sliceId(conversationId), 50, null, null, this.arrayCompletionHandler(messageWorker)
+                    this.sliceId(conversationId), 50, null, null, this.arrayCompletionHandler(res, rej)
                 );
-            return this.response(messageWorker);
+                });
         } catch ({ message: error }) {
             return { error };
         }
@@ -231,12 +246,12 @@ export class Chat {
      */
     async leaveConversation(conversationId: string) {
         try {
-            let worker = spawnWorker();
-            await this.chat
+            return await new Promise((res, rej) => {
+             this.chat
                 .leaveConversationWithConversationIDCompletion(
-                    this.sliceId(conversationId), this.completionHandler(worker)
+                    this.sliceId(conversationId), this.completionHandler(res, rej)
                 );
-            return this.response(worker);
+            });
         } catch ({ message: error }) {
             return { error };
         }
