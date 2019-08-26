@@ -21,7 +21,7 @@ export class HelloWorldModel extends Observable {
         this.user = user;
         this.set("message", "You are logged in as " + user.username);
         this.getUsers();
-        cloud.callLambda("hello")
+        cloud.callLambda("python:hello")
         .then(r => console.log(r), e => console.log(e));
       }
     }, () => alert("Token expired please log in"));

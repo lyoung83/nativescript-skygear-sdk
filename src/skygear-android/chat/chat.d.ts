@@ -10,12 +10,12 @@ export declare class Chat {
     private createArray(array);
     private sliceId(id);
     getChat(): any;
-    createDirectConversation(userId: string, title?: string): Promise<any>;
-    createGroupConversation(userIds: string[], title?: string): Promise<any>;
-    sendMessage(message: string, conversationRecord: any): Promise<any>;
-    fetchCurrentConversations(): Promise<any>;
-    fetchMessages(conversationId: string): Promise<any>;
-    leaveConversation(conversationId: string): Promise<any>;
+    createDirectConversation(userId: string, title?: string): Promise<{}>;
+    createGroupConversation(userIds: string[], title?: string): Promise<{}>;
+    sendMessage(message: string, conversationRecord: any): Promise<{}>;
+    fetchCurrentConversations(): Promise<{}>;
+    fetchMessages(conversationId: string): Promise<{}>;
+    leaveConversation(conversationId: string): Promise<{}>;
     subscribeToConversations(): Promise<Worker | {
         error: any;
     }>;

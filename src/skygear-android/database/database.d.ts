@@ -5,7 +5,6 @@ export declare class Database {
     private private;
     private public;
     constructor(skygear: any);
-    private response(worker);
     private sliceId(id);
     private prepareDB(skygear);
     private createMap(record);

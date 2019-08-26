@@ -6,30 +6,45 @@ export declare const Serializer: any;
 export declare const GetMessagesCallback: any;
 export declare const ConversationSubscriptionCallback: any;
 export declare const UserSubscriptionCallback: any;
-export declare class SKYSaveCallback extends SaveCallback {
-    worker: Worker;
+declare const SKYSaveCallback_base: new () => any;
+export declare class SKYSaveCallback extends SKYSaveCallback_base {
+    resolve: any;
+    reject: any;
+    constructor(res: any, rej: any);
     onSuccess(object: any): void;
     onFail(error: any): void;
 }
-export declare class SKYGetCallback extends GetCallback {
-    worker: Worker;
+declare const SKYGetCallback_base: new () => any;
+export declare class SKYGetCallback extends SKYGetCallback_base {
+    resolve: any;
+    reject: any;
+    constructor(res: any, rej: any);
     onSuccess(object: any): void;
     onGetCachedResult(object: any): void;
     onFail(err: any): void;
 }
-export declare class SKYGetCollectionCallback extends GetCallback {
-    worker: Worker;
+declare const SKYGetCollectionCallback_base: new () => any;
+export declare class SKYGetCollectionCallback extends SKYGetCollectionCallback_base {
+    resolve: any;
+    reject: any;
+    constructor(res: any, rej: any);
     onSuccess(object: any): void;
     onGetCachedResult(object: any): void;
     onFail(err: any): void;
 }
-export declare class SKYLambdaCallback extends LambdaCallback {
-    worker: Worker;
+declare const SKYLambdaCallback_base: new () => any;
+export declare class SKYLambdaCallback extends SKYLambdaCallback_base {
+    resolve: any;
+    reject: any;
+    constructor(res: any, rej: any);
     onLambdaSuccess(object: any): void;
     onLambdaFail(err: any): void;
 }
-export declare class SKYGetMessagesCallback extends GetMessagesCallback {
-    worker: Worker;
+declare const SKYGetMessagesCallback_base: new () => any;
+export declare class SKYGetMessagesCallback extends SKYGetMessagesCallback_base {
+    resolve: any;
+    reject: any;
+    constructor(res: any, rej: any);
     onSuccess(object: any): void;
     onGetCachedResult(object: any): void;
     onFail(err: any): void;
