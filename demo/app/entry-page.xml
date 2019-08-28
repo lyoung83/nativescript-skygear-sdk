@@ -8,11 +8,14 @@
             <Button color="white" class="btn btn-primary" text="Conversations" tap="navigateToConversations" />
             <Button color="white" class="btn btn-primary" text="Todos" tap="navigateToTodos" />
             <Button color="white" class="btn btn-primary" text="Pubsub" tap="navigateToPubsub" />
+            <StackLayout>
+                <Button class="btn btn-outline btn-active btn-rounded-lg btn-def" tap="logout"  id="buttonLogin"  text="Log out" />
+            </StackLayout>
         </StackLayout>
     </nsDrawer:RadSideDrawer.drawerContent>
 
     <nsDrawer:RadSideDrawer.mainContent>
-        <Frame id="root" defaultPage="main/main-page" />
+        <Frame id="root" defaultPage="login/login-page" />
     </nsDrawer:RadSideDrawer.mainContent>
 </nsDrawer:RadSideDrawer>
 <!-- <TabView androidTabsPosition="bottom" selectedIndex="0" selectedIndexChanged="onSelectedIndexChanged">

@@ -6,7 +6,6 @@ export declare class Database {
     private returnRecord;
     private returnCollection;
     private sliceId(id);
-    private createDictionary(record);
     getPublicDatabase(): any;
     getPrivateDatabase(): any;
     savePrivateRecord(record: ISkyRecord): Promise<any>;

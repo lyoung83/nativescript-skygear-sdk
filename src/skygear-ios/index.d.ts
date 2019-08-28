@@ -5,3 +5,4 @@ export { Chat } from "./chat/chat";
 export { Cloud } from "./cloud/cloud";
 export declare const serializeResult: (result: any) => any;
 export declare const serializeError: (error: any) => any;
+export declare function createDictionary(record: any): any;

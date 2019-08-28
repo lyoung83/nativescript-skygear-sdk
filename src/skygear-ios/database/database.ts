@@ -1,6 +1,6 @@
 declare const SKYRecord: any, SKYRecordID: any, SKYQuery: any;
 import * as utils from "tns-core-modules/utils/utils";
-import { serializeResult, serializeError } from "../";
+import { serializeResult, serializeError, createDictionary } from "../";
 import { ISkyRecord } from "../../skygear-sdk.common";
 
 /**
@@ -56,18 +56,6 @@ export class Database {
         } else {
             return uuid[1];
         }
-    }
-
-    private createDictionary(record) {
-        const values = [];
-        let dict;
-        for (const key in record) {
-            if (record.hasOwnProperty(key)) {
-                values.push(record[key]);
-            }
-        }
-        dict = NSDictionary.dictionaryWithObjectsForKeys(values, Object.keys(record));
-        return dict;
     }
 
     /**
@@ -191,7 +179,7 @@ export class Database {
      */
     async updatePrivateRecord(record: ISkyRecord, id: string) {
         try {
-            let dictionary = await this.createDictionary(record);
+            let dictionary = await createDictionary(record);
             let modifiedRecord = SKYRecord.recordWithRecordTypeNameData(record.recordType, this.sliceId(id), dictionary);
             return await new Promise<any>((resolve, reject) => {
                 this.private.saveRecordCompletion(modifiedRecord, this.returnRecord(resolve, reject));
@@ -208,7 +196,7 @@ export class Database {
      */
     async updatePublicRecord(record: ISkyRecord, id: string) {
         try {
-            let dictionary = await this.createDictionary(record);
+            let dictionary = await createDictionary(record);
             let modifiedRecord = SKYRecord.recordWithRecordTypeNameData(record.recordType, this.sliceId(id), dictionary);
             return await new Promise<any>((resolve, reject) => {
                 this.public.saveRecordCompletion(modifiedRecord, this.returnRecord(resolve, reject));

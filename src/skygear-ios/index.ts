@@ -28,3 +28,15 @@ export const serializeError = (error) => {
     return error.userInfo.valueForKey("NSLocalizedDescription");
 
 };
+
+export function createDictionary(record) {
+    const values = [];
+    let dict;
+    for (const key in record) {
+        if (record.hasOwnProperty(key)) {
+            values.push(record[key]);
+        }
+    }
+    dict = NSDictionary.dictionaryWithObjectsForKeys(values, Object.keys(record));
+    return dict;
+}

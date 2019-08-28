@@ -1,0 +1,14 @@
+.input-field{
+    border-width: 1;
+    border-style: 'solid';
+    border-color: mediumaquamarine;
+    border-radius: 10px;
+    padding:10;
+    margin-top:20;
+    margin-left: 20;
+    margin-right: 20;
+}
+.btn-def {
+    width:120;
+    margin-top:20;
+}

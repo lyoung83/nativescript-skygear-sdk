@@ -1,4 +1,5 @@
-import { serializeResult, serializeError } from "../";
+import { serializeResult, serializeError, createDictionary } from "../";
+import { ISkyRecord } from "../../skygear-sdk.common";
 
 /**
  * Class for Authentication against a Skygear backend.
@@ -11,18 +12,18 @@ export class Auth {
 
 
     private promiseHandler(res, rej) {
-        return (user, err) => {
+        return (user: ISkyRecord, err: NSError) => {
             if (err) {
                 rej(serializeError(err));
                 return;
             }
+            console.log("hello")
             res(serializeResult(user));
         };
     }
 
     async getWhoAmI() {
         try {
-
             return await new Promise((res, rej) => {
                 this.auth.getWhoAmIWithCompletionHandler(this.promiseHandler(res, rej));
             });
@@ -40,7 +41,7 @@ export class Auth {
         try {
             return await new Promise((res, rej) => {
                 this.auth
-                .signupWithUsernamePasswordCompletionHandler(username, password, this.promiseHandler(res, rej));
+                    .signupWithUsernamePasswordCompletionHandler(username, password, this.promiseHandler(res, rej));
             });
         } catch {
             return { error: "duplicate record or missing information" };
@@ -56,8 +57,8 @@ export class Auth {
     async signupWithEmail(email: string, password: string) {
         try {
             return await new Promise((res, rej) => {
-             this.auth
-                .signupWithEmailPasswordCompletionHandler(email, password, this.promiseHandler(res, rej));
+                this.auth
+                    .signupWithEmailPasswordCompletionHandler(email, password, this.promiseHandler(res, rej));
             });
         } catch {
             return { error: "duplicate record or missing information" };
@@ -72,8 +73,8 @@ export class Auth {
     async loginWithUsername(username: string, password: string) {
         try {
             return await new Promise((res, rej) => {
-             this.auth
-                .loginWithUsernamePasswordCompletionHandler(username, password, this.promiseHandler(res, rej));
+                this.auth
+                    .loginWithUsernamePasswordCompletionHandler(username, password, this.promiseHandler(res, rej));
             });
         } catch ({ message }) {
             return { error: message };
@@ -89,8 +90,8 @@ export class Auth {
     async loginWithEmail(email: string, password: string) {
         try {
             return await new Promise((res, rej) => {
-             this.auth
-                .loginWithEmailPasswordCompletionHandler(email, password, this.promiseHandler(res, rej));
+                this.auth
+                    .loginWithEmailPasswordCompletionHandler(email, password, this.promiseHandler(res, rej));
             });
 
         } catch {
@@ -104,11 +105,23 @@ export class Auth {
     async logout() {
         try {
             return await new Promise((res, rej) => {
-             this.auth.logoutWithCompletionHandler(this.promiseHandler(res, rej));
+                this.auth.logoutWithCompletionHandler(this.promiseHandler(res, rej));
             });
 
         } catch {
             return { error: "Logout Failed" };
+        }
+    }
+
+    async signInWithGoogle() {
+        try {
+            return await new Promise((resolve, reject) => {
+                let provider = NSString.alloc().initWithString("google");
+                let options = NSDictionary.alloc().initWithObjectsForKeys(["scheme", "scope"], ["http", ["email"]]);
+                this.auth.loginOAuthProviderOptionsCompletionHandler(provider, options, this.promiseHandler(resolve, reject));
+            })
+        } catch (error) {
+            return { error }
         }
     }
 

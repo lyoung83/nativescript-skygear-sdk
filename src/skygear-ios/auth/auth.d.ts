@@ -8,4 +8,5 @@ export declare class Auth {
     loginWithUsername(username: string, password: string): Promise<{}>;
     loginWithEmail(email: string, password: string): Promise<{}>;
     logout(): Promise<{}>;
+    signInWithGoogle(): Promise<{}>;
 }

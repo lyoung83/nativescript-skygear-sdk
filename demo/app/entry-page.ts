@@ -4,6 +4,7 @@ import { Page } from "tns-core-modules/ui/page";
 import { RadSideDrawer } from "nativescript-ui-sidedrawer";
 import { getRootView } from "tns-core-modules/application/application";
 import { getFrameById } from "tns-core-modules/ui/frame/frame";
+import { skygearSdk } from "./sdk";
 
 
 export function onLoad() {
@@ -56,4 +57,17 @@ export function navigateToConversations(args: EventData) {
         clearHistory: true
     });
     sideDrawer.closeDrawer();
+}
+
+export function logout() {
+    const sideDrawer: RadSideDrawer = <RadSideDrawer>getRootView();
+    const featuredFrame = getFrameById("root");
+    skygearSdk.auth.logout()
+    .then(() => {
+        sideDrawer.closeDrawer();
+        featuredFrame.navigate({
+            moduleName: "login/login-page",
+            clearHistory: true
+        });
+    })
 }
