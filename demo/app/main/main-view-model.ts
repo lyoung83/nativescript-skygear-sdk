@@ -16,7 +16,7 @@ export class HelloWorldModel extends Observable {
     const { auth, cloud } = skygearSdk;
     this.auth = auth;
     this.message = "You are not logged in";
-    auth.getWhoAmI().then(user => {
+    auth.getWhoAmI().then((user: any )=> {
       if (user.username) {
         this.user = user;
         this.set("message", "You are logged in as " + user.username);

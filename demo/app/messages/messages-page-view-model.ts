@@ -47,7 +47,7 @@ export class Messages extends Observable {
 
     async getMessages() {
         try {
-            let messages: any[] = await this.skygear.chat.fetchMessages(this.conversation._id);
+            let messages: any = await this.skygear.chat.fetchMessages(this.conversation._id);
             this.set("messages", messages.reverse());
         } catch {
             alert("Unable to fetch messages");
